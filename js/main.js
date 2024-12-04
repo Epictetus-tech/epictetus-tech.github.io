@@ -66,9 +66,9 @@ class Terminal {
 ██║ ╚═╝ ██║╚████╔╝ ╚██████╔╝     Shell: bash 5.1.16
 ╚═╝     ╚═╝ ╚═══╝   ╚════██╗     Terminal: web-term
                          ╚═╝     CPU: JavaScript V8
-                                Memory: 512MB / 1024MB
-                                Disk: 121GB / 512GB
-                                Theme: Dark</span>`;
+                                 Memory: 512MB / 1024MB
+                                 Disk: 121GB / 512GB
+                                 Theme: Dark</span>`;
 
         const mobileBanner = `<span class="banner-text">
 ███╗   ███╗    ██╗  ██████╗
