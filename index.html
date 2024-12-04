@@ -3,17 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive Terminal Portfolio - A unique command-line interface portfolio">
+    <meta name="keywords" content="portfolio, terminal, developer, interactive">
     <title>Terminal Portfolio</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/png" href="img/fav-icon.png">
 </head>
 <body>
-    <div class="terminal">
+    <div class="terminal" role="application" aria-label="Terminal Interface">
         <div class="terminal-header">
-            <div class="terminal-buttons">
-                <span class="close"></span>
-                <span class="minimize"></span>
-                <span class="maximize"></span>
+            <div class="terminal-buttons" role="toolbar" aria-label="Terminal Controls">
+                <span class="close" role="button" aria-label="Close"></span>
+                <span class="minimize" role="button" aria-label="Minimize"></span>
+                <span class="maximize" role="button" aria-label="Maximize"></span>
             </div>
             <div class="terminal-title">user@portfolio:~</div>
         </div>

@@ -26,6 +26,8 @@ body::before {
     pointer-events: none;
     z-index: -1;
     animation: createStars 0.1s linear infinite;
+    will-change: box-shadow;
+    backface-visibility: hidden;
 }
 
 @keyframes starMove1 {
@@ -99,6 +101,7 @@ body::before {
     z-index: 2;
     animation: startup 0.8s cubic-bezier(0.17, 0.84, 0.44, 1);
     transform-origin: center center;
+    will-change: transform, opacity;
 }
 
 .terminal::before {
@@ -187,7 +190,7 @@ body::before {
     padding: 20px;
     height: calc(100% - 40px);
     overflow-y: auto;
-    color: var(--text-color, #00ff00);
+    color: #00ff00;
     animation: textShadow 1.6s infinite;
     transition: visibility 0s, opacity 0.3s ease;
 }
@@ -198,17 +201,19 @@ body::before {
     position: relative;
     padding: 5px 0;
     align-items: center;
+    transition: opacity 0.3s ease;
+    height: 24px;
 }
 
 .prompt {
-    color: var(--prompt-color, #00ff00);
+    color: #4CAF50;
     line-height: 1;
 }
 
 .terminal-input {
     background: none;
     border: none;
-    color: var(--text-color, #00ff00);
+    color: #00ff00;
     font-size: 16px;
     outline: none;
     width: auto;
@@ -217,6 +222,7 @@ body::before {
     padding: 0;
     line-height: 1;
     flex-grow: 1;
+    transition: opacity 0.3s ease;
 }
 
 .cursor {
@@ -225,7 +231,11 @@ body::before {
     top: 50%;
     transform: translateY(-50%);
     animation: blink 1s infinite;
-    color: var(--text-color, #00ff00);
+    color: #00ff00;
+    background-color: #00ff00;
+    width: 8px;
+    height: 16px;
+    margin-top: -1px;
 }
 
 @keyframes blink {
@@ -236,16 +246,15 @@ body::before {
 .terminal-output {
     margin-bottom: 10px;
     white-space: pre-wrap;
+    transition: opacity 0.3s ease;
 }
 
 @media (max-width: 600px) {
     .terminal {
-        height: 90vh;
-        width: 95%;
-    }
-    
-    .terminal-title {
-        font-size: 12px;
+        height: 100vh;
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
     }
     
     .terminal-content {
@@ -255,17 +264,31 @@ body::before {
 
     .terminal-input {
         font-size: 14px;
-    }
-
-    .terminal-input-line {
-        gap: 5px;
+        min-width: 150px;
     }
 
     .banner-text {
-        font-size: 10px;
+        font-size: 8px;
+        line-height: 1;
         white-space: pre;
-        display: block;
-        line-height: 1.2;
+    }
+
+    .terminal-buttons {
+        gap: 6px;
+    }
+
+    .terminal-buttons span {
+        width: 10px;
+        height: 10px;
+    }
+
+    .cursor {
+        left: 150px;
+    }
+
+    .terminal-output div {
+        word-break: break-word;
+        white-space: pre-wrap;
     }
 }
 
@@ -285,78 +308,57 @@ body::before {
     text-shadow: 0 0 5px #ff8c42, 0 0 10px #ff8c42;
 }
 
-.terminal-theme-default {
-    --bg-color: #2b2b2b;
-    --text-color: #00ff00;
-    --header-bg: #3c3c3c;
-    --prompt-color: #00ff00;
-}
-
-.terminal-theme-matrix {
-    --bg-color: #000000;
-    --text-color: #00ff00;
-    --header-bg: #001100;
-    --prompt-color: #00ff00;
-}
-
-.terminal-theme-ubuntu {
-    --bg-color: #300a24;
-    --text-color: #ffffff;
-    --header-bg: #3c0b2c;
-    --prompt-color: #ff8c42;
-}
-
-.terminal-theme-light {
-    --bg-color: #f5f5f5;
-    --text-color: #2e3436;
-    --header-bg: #e4e4e4;
-    --prompt-color: #2c5d8d;
-}
-
-/* Override glow colors for light theme */
-.terminal-theme-light .command {
-    color: #2c5d8d;
-    text-shadow: 0 0 5px #2c5d8d, 0 0 10px #2c5d8d;
-    font-weight: bold;
-}
-
-.terminal-theme-light .banner-text {
-    color: #2c5d8d;
-    text-shadow: 0 0 5px #2c5d8d, 0 0 10px #2c5d8d;
-}
-
-.terminal-theme-light .glow-orange {
-    color: #2c5d8d;
-    text-shadow: 0 0 5px #2c5d8d, 0 0 10px #2c5d8d;
-}
-
 .terminal-meltdown {
+    animation: meltdown 2s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards, colorCycle 0.2s linear infinite !important;
+    pointer-events: none;
     position: relative;
-    z-index: 999;
-    animation: melt 2s forwards, glitch 0.2s infinite !important;
+    z-index: 9999;
+    will-change: transform, opacity, filter;
 }
 
-@keyframes melt {
+.terminal-meltdown * {
+    animation: meltdown 2s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards, colorCycle 0.2s linear infinite !important;
+}
+
+@keyframes meltdown {
     0% {
-        transform: scale(1) rotate(0deg);
+        transform: translateY(0) scale(1) rotate(0deg);
         opacity: 1;
+        filter: blur(0) hue-rotate(0deg);
+    }
+    20% {
+        transform: translateY(10vh) scale(0.95) rotate(-2deg) translateX(-10px);
+        opacity: 0.9;
+        filter: blur(2px) hue-rotate(90deg);
+    }
+    40% {
+        transform: translateY(30vh) scale(0.9) rotate(3deg) translateX(15px);
+        opacity: 0.7;
+        filter: blur(4px) hue-rotate(180deg);
+    }
+    60% {
+        transform: translateY(50vh) scale(0.85) rotate(-4deg) translateX(-20px);
+        opacity: 0.5;
+        filter: blur(6px) hue-rotate(270deg);
+    }
+    80% {
+        transform: translateY(70vh) scale(0.8) rotate(5deg) translateX(25px);
+        opacity: 0.3;
+        filter: blur(8px) hue-rotate(360deg);
     }
     100% {
-        transform: scale(0) rotate(25deg);
+        transform: translateY(120vh) scale(0.7) rotate(-6deg);
         opacity: 0;
-        filter: blur(10px);
+        filter: blur(10px) hue-rotate(420deg);
     }
 }
 
-@keyframes glitch {
-    0% {
-        transform: translate(0);
-        filter: hue-rotate(0deg);
-    }
-    100% {
-        transform: translate(0);
-        filter: hue-rotate(360deg);
-    }
+@keyframes colorCycle {
+    0% { color: #00ff00; }
+    25% { color: #ff0000; }
+    50% { color: #0000ff; }
+    75% { color: #ffff00; }
+    100% { color: #00ff00; }
 }
 
 @keyframes flicker {
@@ -366,27 +368,10 @@ body::before {
 }
 
 @keyframes textShadow {
-    0% { text-shadow: 0.4389924193300864px 0 1px rgba(0,30,255,0.5), -0.4389924193300864px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    5% { text-shadow: 2.7928974010788217px 0 1px rgba(0,30,255,0.5), -2.7928974010788217px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    10% { text-shadow: 0.02956275843481219px 0 1px rgba(0,30,255,0.5), -0.02956275843481219px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    15% { text-shadow: 0.40218538552878136px 0 1px rgba(0,30,255,0.5), -0.40218538552878136px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    20% { text-shadow: 3.4794037899852017px 0 1px rgba(0,30,255,0.5), -3.4794037899852017px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    25% { text-shadow: 1.6125630401149584px 0 1px rgba(0,30,255,0.5), -1.6125630401149584px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    30% { text-shadow: 0.7015590085143956px 0 1px rgba(0,30,255,0.5), -0.7015590085143956px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    35% { text-shadow: 3.896914047650351px 0 1px rgba(0,30,255,0.5), -3.896914047650351px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    40% { text-shadow: 3.870905614848819px 0 1px rgba(0,30,255,0.5), -3.870905614848819px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    45% { text-shadow: 2.231056963361899px 0 1px rgba(0,30,255,0.5), -2.231056963361899px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    50% { text-shadow: 0.08084290417898504px 0 1px rgba(0,30,255,0.5), -0.08084290417898504px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    55% { text-shadow: 2.3758461067427543px 0 1px rgba(0,30,255,0.5), -2.3758461067427543px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    60% { text-shadow: 2.202193051050636px 0 1px rgba(0,30,255,0.5), -2.202193051050636px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    65% { text-shadow: 2.8638780614874975px 0 1px rgba(0,30,255,0.5), -2.8638780614874975px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    70% { text-shadow: 0.48874025155497314px 0 1px rgba(0,30,255,0.5), -0.48874025155497314px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    75% { text-shadow: 1.8948491305757957px 0 1px rgba(0,30,255,0.5), -1.8948491305757957px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    80% { text-shadow: 0.0833037308038857px 0 1px rgba(0,30,255,0.5), -0.0833037308038857px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    85% { text-shadow: 0.09769827255241735px 0 1px rgba(0,30,255,0.5), -0.09769827255241735px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    90% { text-shadow: 3.443339761481782px 0 1px rgba(0,30,255,0.5), -3.443339761481782px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    95% { text-shadow: 2.1841838852799786px 0 1px rgba(0,30,255,0.5), -2.1841838852799786px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
-    100% { text-shadow: 2.6208764473832513px 0 1px rgba(0,30,255,0.5), -2.6208764473832513px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
+    0%, 100% { text-shadow: 0.4389924193300864px 0 1px rgba(0,30,255,0.5), -0.4389924193300864px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
+    25% { text-shadow: 2.7928974010788217px 0 1px rgba(0,30,255,0.5), -2.7928974010788217px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
+    50% { text-shadow: 0.02956275843481219px 0 1px rgba(0,30,255,0.5), -0.02956275843481219px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
+    75% { text-shadow: 2.3758461067427543px 0 1px rgba(0,30,255,0.5), -2.3758461067427543px 0 1px rgba(255,0,80,0.3), 0 0 3px; }
 }
 
 @keyframes startup {
@@ -434,38 +419,58 @@ body,
 .terminal, 
 .terminal-content,
 .terminal-input {
-    cursor: none !important;  /* Hide the default cursor */
+    cursor: default !important;
+}
+
+.terminal-input {
+    cursor: text !important;
 }
 
 /* Update cursor styles */
 .custom-cursor {
-    width: 0;
-    height: 0;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-bottom: 12px solid rgba(255, 253, 240, 0.8);
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%) rotate(-45deg);
-    opacity: 0;
-    transition: opacity 0.3s;
+    display: none;
 }
 
-.custom-cursor.text {
-    width: 2px;
-    height: 16px;
-    border: none;
-    background: rgba(255, 253, 240, 0.8);
-    transform: translate(-50%, -50%);
+.command-line {
+    white-space: pre;
+    display: block;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
 }
 
-function createStarField() {
-    // ... existing code ...
+.output-line {
+    white-space: pre-wrap;
+    display: block;
+    margin-top: 2px;
+}
+
+@keyframes warningFlash {
+    0% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+    33% { color: #ff8800; text-shadow: 0 0 10px #ff8800; }
+    66% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+    100% { color: #ff8800; text-shadow: 0 0 10px #ff8800; }
+}
+
+/* Add touch device optimization */
+@media (hover: none) {
+    .terminal-buttons span:hover {
+        filter: none;
+    }
     
-    // Much slower animation (45-60 seconds)
-    const duration = Math.random() * 15 + 45;
-    star.style.setProperty('--duration', `${duration}s`);
-    
-    // ... rest of code ...
+    .terminal {
+        touch-action: manipulation;
+    }
+}
+
+/* For very small screens */
+@media (max-width: 350px) {
+    .banner-text {
+        font-size: 6px;
+    }
+
+    .terminal-content {
+        padding: 5px;
+        font-size: 12px;
+    }
 }

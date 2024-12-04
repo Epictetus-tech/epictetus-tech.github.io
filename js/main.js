@@ -1,129 +1,113 @@
+const CURSOR_BASE_POSITION = 175;
+const CHAR_WIDTH = 9.6;
+const COLORS = {
+    SUCCESS: '#ffff00',
+    WARNING: '#ff0000',
+    WELCOME: '#00ff00',
+    MELTDOWN: '#b366ff',
+    HACK: '#ff0000'
+};
+
+const DELAYS = {
+    BOOT_MIN: 100,
+    BOOT_MAX: 500,
+    BOOT_COMPLETE: 1000,
+    MELTDOWN_START: 1500,
+    MELTDOWN_WARNING: 2000,
+    MELTDOWN_COMPLETE: 2000,
+    HACK_STEP: 1000
+};
+
+const STYLES = {
+    SUCCESS: (text) => `<span style="color: ${COLORS.SUCCESS}; text-shadow: 0 0 5px ${COLORS.SUCCESS}">${text}</span>`,
+    WELCOME: (text) => `<span style="color: ${COLORS.WELCOME}">${text}</span>`,
+    WARNING: (text) => `<span style="color: ${COLORS.WARNING}; opacity: 0.3;">${text}</span>`,
+    MELTDOWN: (text) => `<span style="color: ${COLORS.MELTDOWN}; text-shadow: 0 0 8px ${COLORS.MELTDOWN}">${text}</span>`,
+    SECTION: (title) => `\n<span style="color: #4CAF50; font-weight: bold; font-size: 1.2em; text-shadow: 0 0 5px rgba(76, 175, 80, 0.5);">╭─── ${title} ───╮</span>`,
+    SUBSECTION: (title) => `<span style="color: #87CEEB; font-weight: bold; margin-left: 2px;">┌─ ${title}</span>`,
+    LIST_ITEM: (text) => `<span style="color: #DDD; margin-left: 4px;">│  • ${text}</span>`,
+    PROJECT_TITLE: (text) => `<span style="color: #FFA500; font-weight: bold; font-size: 1.1em; text-shadow: 0 0 5px rgba(255, 165, 0, 0.5);">╭──── ${text} ────╮</span>`,
+    PROJECT_DESC: (text) => `<span style="color: #87CEEB; font-style: italic; margin-left: 4px;">│  ${text}</span>`,
+    CATEGORY: (text) => `<span style="color: #FF69B4; font-weight: bold; text-shadow: 0 0 5px rgba(255, 105, 180, 0.3);">┌─── ${text} ───┐</span>`,
+    SEPARATOR: () => `<span style="color: #666;">╰${'─'.repeat(30)}╯</span>`,
+    HACK: (text) => `<span style="color: ${COLORS.HACK}; text-shadow: 0 0 8px ${COLORS.HACK}; font-weight: bold;">${text}</span>`,
+    MELTDOWN_WARNING: (text) => `<span style="color: ${COLORS.WARNING}; animation: warningFlash 0.5s linear infinite;">${text}</span>`
+};
+
 class Terminal {
     constructor() {
-        this.terminal = document.querySelector('.terminal-content');
-        this.output = document.querySelector('.terminal-output');
-        this.input = document.querySelector('.terminal-input');
-        this.prompt = 'user@portfolio:~$ ';
-        this.commands = {
-            help: this.showHelp.bind(this),
-            clear: this.clear.bind(this),
-            about: this.about.bind(this),
-            skills: this.skills.bind(this),
-            projects: this.projects.bind(this),
-            contact: this.contact.bind(this),
-            theme: this.changeTheme.bind(this),
-            pwd: this.pwd.bind(this)
-        };
-        
-        this.easterEggs = {
-            'sudo rm -rf /': this.systemMeltdown.bind(this),
-            'hack': this.fakeHack.bind(this)
-        };
-        
-        this.themes = {
-            default: 'terminal-theme-default',
-            matrix: 'terminal-theme-matrix',
-            ubuntu: 'terminal-theme-ubuntu',
-            light: 'terminal-theme-light'
-        };
-        
-        this.commandHistory = [];
-        this.historyIndex = -1;
-        
-        this.currentPath = '/home/user';
-        
-        this.initializeTerminal();
+        try {
+            this.terminal = document.querySelector('.terminal-content');
+            this.output = document.querySelector('.terminal-output');
+            this.input = document.querySelector('.terminal-input');
+            this.cursor = document.querySelector('.cursor');
+            this.inputLine = document.querySelector('.terminal-input-line');
+            
+            if (!this.terminal || !this.output || !this.input || !this.cursor || !this.inputLine) {
+                throw new Error('Required DOM elements not found');
+            }
+            
+            this.prompt = 'user@portfolio:~$ ';
+            this.CURSOR_BASE_POSITION = this.prompt.length * CHAR_WIDTH;
+
+            this.commands = {
+                help: this.showHelp.bind(this),
+                clear: this.clear.bind(this),
+                about: this.about.bind(this),
+                skills: this.skills.bind(this),
+                projects: this.projects.bind(this),
+                contact: this.contact.bind(this),
+                pwd: this.pwd.bind(this)
+            };
+            
+            this.easterEggs = {
+                'sudo rm -rf /': this.systemMeltdown.bind(this),
+                'hack': this.fakeHack.bind(this)
+            };
+            
+            this.commandHistory = [];
+            this.historyIndex = -1;
+            this.currentPath = '/home/user';
+            
+            this.initializeTerminal();
+        } catch (error) {
+            console.error('Terminal initialization failed:', error);
+        }
     }
 
     initializeTerminal() {
-        const terminalContainer = document.querySelector('.terminal');
-        
-        // Hide input line initially but keep it accessible
-        const inputLine = document.querySelector('.terminal-input-line');
-        inputLine.style.opacity = '0';  // Change from visibility to opacity
-        
-        // Listen for the startup animation to complete
-        terminalContainer.addEventListener('animationend', () => {
-            this.showBootSequence();
-        }, { once: true });
+        this.inputLine.style.opacity = '0';
 
-        this.input.addEventListener('keypress', (e) => {
+        this.input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const command = this.input.value.trim().toLowerCase();
                 this.executeCommand(command);
                 this.input.value = '';
-                // Reset cursor position
-                const cursor = document.querySelector('.cursor');
-                cursor.style.left = '175px';
-            }
-        });
-
-        // Update cursor position while typing
-        this.input.addEventListener('input', () => {
-            const cursor = document.querySelector('.cursor');
-            const inputWidth = this.input.value.length * 9.6;
-            cursor.style.left = `${175 + inputWidth}px`;
-            cursor.style.top = '50%';  // Ensure vertical alignment stays consistent
-        });
-
-        // Add command history navigation
-        this.input.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowUp') {
+                this.resetCursor();
+            } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
-                if (this.historyIndex < this.commandHistory.length - 1) {
-                    this.historyIndex++;
-                    this.input.value = this.commandHistory[this.historyIndex];
-                    // Update cursor position
-                    const cursor = document.querySelector('.cursor');
-                    const inputWidth = this.input.value.length * 9.6;
-                    cursor.style.left = `${175 + inputWidth}px`;
-                }
+                this.navigateHistory('up');
             } else if (e.key === 'ArrowDown') {
                 e.preventDefault();
-                if (this.historyIndex > -1) {
-                    this.historyIndex--;
-                    this.input.value = this.historyIndex >= 0 ? 
-                        this.commandHistory[this.historyIndex] : '';
-                    // Update cursor position
-                    const cursor = document.querySelector('.cursor');
-                    const inputWidth = this.input.value.length * 9.6;
-                    cursor.style.left = `${175 + inputWidth}px`;
-                }
+                this.navigateHistory('down');
             }
         });
+
+        this.input.addEventListener('input', () => {
+            this.updateCursorPosition();
+        });
+
+        this.showBootSequence();
     }
 
     async showBootSequence() {
-        const bootMessages = [
-            'BIOS Version 1.0.4',
-            'Running system diagnostics...',
-            'CPU: JavaScript V8 <span style="color: #ffff00; text-shadow: 0 0 5px #ffff00">[SUCCESS]</span>',
-            'Memory Test: OK <span style="color: #ffff00; text-shadow: 0 0 5px #ffff00">[PASS]</span>',
-            'Checking storage devices...',
-            'SSD Status: Healthy <span style="color: #ffff00; text-shadow: 0 0 5px #ffff00">[VERIFIED]</span>',
-            'Loading kernel...',
-            'Loading initial ramdisk...',
-            'Starting system logger <span style="color: #ffff00; text-shadow: 0 0 5px #ffff00">[DONE]</span>',
-            'Starting system message bus <span style="color: #ffff00; text-shadow: 0 0 5px #ffff00">[DONE]</span>',
-            'Starting network manager <span style="color: #ffff00; text-shadow: 0 0 5px #ffff00">[DONE]</span>',
-            'Mounting filesystems...',
-            '<span style="color: #ffff00; text-shadow: 0 0 5px #ffff00">[  OK  ]</span> Started Network File System',
-            '<span style="color: #ffff00; text-shadow: 0 0 5px #ffff00">[  OK  ]</span> Reached target Network',
-            '<span style="color: #ffff00; text-shadow: 0 0 5px #ffff00">[  OK  ]</span> Reached target Basic System',
-            '<span style="color: #ffff00; text-shadow: 0 0 5px #ffff00">[  OK  ]</span> Started D-Bus System Message Bus',
-            '<span style="color: #ffff00; text-shadow: 0 0 5px #ffff00">[  OK  ]</span> Started System Logging Service',
-            '<span style="color: #ffff00; text-shadow: 0 0 5px #ffff00">[  OK  ]</span> Reached target System Initialization',
-            '<span style="color: #ffff00; text-shadow: 0 0 5px #ffff00">[  OK  ]</span> Started Portfolio Service',
-            'Portfolio Terminal 1.0.0 Loading...',
-            'Initializing user interface...',
-            'Starting session manager...',
-            'Boot sequence complete. <span style="color: #ffff00; text-shadow: 0 0 5px #ffff00">[SUCCESS]</span>'
-        ];
-
+        const bootMessages = this.getBootMessages();
+        const minDelay = 50;
+        const maxDelay = 200;
+        
         for (const msg of bootMessages) {
-            this.appendOutput(`${msg}`);
-            // Random delay between 100ms and 500ms
-            await new Promise(resolve => setTimeout(resolve, Math.random() * 400 + 100));
+            this.appendOutput(msg);
+            await new Promise(resolve => setTimeout(resolve, Math.random() * (maxDelay - minDelay) + minDelay));
         }
         
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -131,25 +115,47 @@ class Terminal {
         this.showWelcomeMessage();
     }
 
-    getBrowserInfo() {
-        const ua = navigator.userAgent;
-        let browserName;
-        
-        if (ua.includes('Firefox/')) {
-            browserName = 'Firefox';
-        } else if (ua.includes('Chrome/')) {
-            browserName = 'Chrome';
-        } else if (ua.includes('Safari/') && !ua.includes('Chrome')) {
-            browserName = 'Safari';
-        } else {
-            browserName = 'Unknown Browser';
-        }
-        
-        return browserName;
+    getBootMessages() {
+        const ok = () => STYLES.SUCCESS('[  OK  ]');
+        return [
+            'BIOS Version 1.0.4',
+            'Running system diagnostics...',
+            `CPU: JavaScript V8 ${STYLES.SUCCESS('[SUCCESS]')}`,
+            `Memory Test: OK ${STYLES.SUCCESS('[PASS]')}`,
+            'Checking storage devices...',
+            `SSD Status: Healthy ${STYLES.SUCCESS('[VERIFIED]')}`,
+            'Loading kernel...',
+            'Loading initial ramdisk...',
+            `Starting system logger ${STYLES.SUCCESS('[DONE]')}`,
+            `Starting system message bus ${STYLES.SUCCESS('[DONE]')}`,
+            `Starting network manager ${STYLES.SUCCESS('[DONE]')}`,
+            'Mounting filesystems...',
+            `${ok()} Started Network File System`,
+            `${ok()} Reached target Network`,
+            `${ok()} Reached target Basic System`,
+            `${ok()} Started D-Bus System Message Bus`,
+            `${ok()} Started System Logging Service`,
+            `${ok()} Reached target System Initialization`,
+            `${ok()} Started Portfolio Service`,
+            'Portfolio Terminal 1.0.0 Loading...',
+            'Initializing user interface...',
+            'Starting session manager...',
+            `Boot sequence complete. ${STYLES.SUCCESS('[SUCCESS]')}`
+        ];
     }
 
     showWelcomeMessage() {
-        const systemInfo = {
+        const systemInfo = this.getSystemInfo();
+        const asciiArt = this.getAsciiArt(systemInfo);
+        const welcomeText = this.getWelcomeText();
+        
+        this.appendOutput(asciiArt + '\n\n' + welcomeText);
+        this.inputLine.style.opacity = '1';
+        this.input.focus();
+    }
+
+    getSystemInfo() {
+        return {
             uptime: Math.floor(Math.random() * 100),
             memory: {
                 total: 1024,
@@ -159,13 +165,25 @@ class Terminal {
                 total: 512,
                 used: Math.floor(Math.random() * 300),
             },
-            cpu: navigator.hardwareConcurrency ? `JavaScript V8 (${navigator.hardwareConcurrency} cores)` : 'JavaScript V8',
+            cpu: navigator.hardwareConcurrency ? 
+                `JavaScript V8 (${navigator.hardwareConcurrency} cores)` : 
+                'JavaScript V8',
             browser: this.getBrowserInfo(),
             resolution: `${window.screen.width}x${window.screen.height}`
         };
+    }
 
-        const asciiArt = `<span class="banner-text">
+    getBrowserInfo() {
+        const ua = navigator.userAgent;
+        if (ua.includes('Firefox')) return 'Firefox';
+        if (ua.includes('Chrome')) return 'Chrome';
+        if (ua.includes('Safari')) return 'Safari';
+        if (ua.includes('Edge')) return 'Edge';
+        return 'Unknown Browser';
+    }
 
+    getAsciiArt(systemInfo) {
+        return `<span class="banner-text">
 ███╗   ███╗    ██╗  ██████╗      user@portfolio
 ████╗ ████║    ██║ ██╔═══██╗     OS: Portfolio Linux x86_64
 ██╔████╔██║    ██║ ██║   ██║     Kernel: 6.1.0-portfolio
@@ -175,40 +193,35 @@ class Terminal {
                          ╚═╝     CPU: ${systemInfo.cpu}
                                  Memory: ${systemInfo.memory.used}MB / ${systemInfo.memory.total}MB
                                  Disk: ${systemInfo.disk.used}GB / ${systemInfo.disk.total}GB
-                                 Resolution: ${systemInfo.resolution}</span>
+                                 Resolution: ${systemInfo.resolution}</span>`;
+    }
 
-<span style="color: #00ff00">Welcome to my interactive terminal portfolio!</span>
-Type '<span class="command">help</span>' to see available commands.
-<span style="color: #ff0000; opacity: 0.1;">WARNING: Unauthorized use of 'sudo rm -rf /' will result in system meltdown</span>`;
-
-        this.appendOutput(asciiArt);
-        const inputLine = document.querySelector('.terminal-input-line');
-        inputLine.style.opacity = '1';
-        this.input.focus();
+    getWelcomeText() {
+        return `${STYLES.WELCOME('Welcome to my portfolio terminal!')}
+Type ${STYLES.SUCCESS('help')} to see available commands.
+${STYLES.WARNING('NOTICE: System administrators have detected unauthorized access attempts. Any attempts to remove the root directory or hack into the mainframe will be logged.')}`;
     }
 
     executeCommand(command) {
-        // Add command to history if not empty
         if (command) {
             this.commandHistory.unshift(command);
             this.historyIndex = -1;
         }
-        
-        const [cmd, ...args] = command.split(' ');
-        this.appendOutput(`${this.prompt}${command}`);
-        
+
+        const outputLine = document.createElement('div');
+        outputLine.innerHTML = `<span class="prompt">${this.prompt}</span>${command}`;
+        this.output.appendChild(outputLine);
+
         if (command === '') {
-            this.appendOutput('');
             return;
         }
 
-        // Check for easter eggs first using the full command
         if (this.easterEggs[command]) {
             this.easterEggs[command]();
             return;
         }
 
-        // Then check for regular commands
+        const [cmd, ...args] = command.split(' ');
         if (this.commands[cmd]) {
             this.commands[cmd](args);
         } else {
@@ -217,27 +230,70 @@ Type '<span class="command">help</span>' to see available commands.
     }
 
     appendOutput(text) {
-        const fragment = document.createDocumentFragment();
-        const div = document.createElement('div');
-        div.innerHTML = `${text}\n`;
-        fragment.appendChild(div);
-        this.output.appendChild(fragment);
+        const outputLine = document.createElement('div');
+        if (!text.includes('<span')) {
+            const sanitized = text.replace(/[<>]/g, char => ({
+                '<': '&lt;',
+                '>': '&gt;'
+            }[char]));
+            outputLine.innerHTML = sanitized;
+        } else {
+            outputLine.innerHTML = text;  // Allow HTML for styled content
+        }
+        this.output.appendChild(outputLine);
         this.terminal.scrollTop = this.terminal.scrollHeight;
     }
 
+    updateCursorPosition() {
+        const inputWidth = this.input.value.length * CHAR_WIDTH;
+        this.cursor.style.left = `${CURSOR_BASE_POSITION + inputWidth}px`;
+    }
+
+    resetCursor() {
+        this.cursor.style.left = `${CURSOR_BASE_POSITION}px`;
+    }
+
+    navigateHistory(direction) {
+        if (direction === 'up' && this.historyIndex < this.commandHistory.length - 1) {
+            this.historyIndex++;
+        } else if (direction === 'down' && this.historyIndex > -1) {
+            this.historyIndex--;
+        } else {
+            return;
+        }
+
+        this.input.value = this.historyIndex >= 0 ? 
+            this.commandHistory[this.historyIndex] : '';
+        this.updateCursorPosition();
+    }
+
+    contact() {
+        const contactInfo = {
+            LinkedIn: 'linkedin.com/in/michael-quintero-835b3752'
+        };
+
+        let output = `${STYLES.SECTION('Contact Information')}\n`;
+        for (const [platform, info] of Object.entries(contactInfo)) {
+            output += `${STYLES.LIST_ITEM(`${platform}: ${info}`)}\n`;
+        }
+        this.appendOutput(output);
+    }
+
     showHelp() {
-        const helpText = `
-Available commands:
-    <span class="command">help</span>     - Show this help message
-    <span class="command">clear</span>    - Clear the terminal
-    <span class="command">about</span>    - About me
-    <span class="command">skills</span>   - My technical skills
-    <span class="command">projects</span> - View my projects
-    <span class="command">contact</span>  - Contact information
-    <span class="command">theme</span>    - Change terminal theme (usage: theme [default|matrix|ubuntu|light])
-    <span class="command">pwd</span>      - Print working directory
-        `;
-        this.appendOutput(helpText);
+        const commands = {
+            'about': 'Display information about me',
+            'skills': 'List my technical skills',
+            'projects': 'View my projects',
+            'contact': 'Display contact information',
+            'clear': 'Clear the terminal screen',
+            'help': 'Show this help message'
+        };
+
+        let output = `${STYLES.SECTION('Available Commands')}\n`;
+        for (const [cmd, desc] of Object.entries(commands)) {
+            output += `${STYLES.LIST_ITEM(`${STYLES.SUCCESS(cmd.padEnd(10))} - ${desc}`)}\n`;
+        }
+        this.appendOutput(output);
     }
 
     clear() {
@@ -245,103 +301,133 @@ Available commands:
     }
 
     about() {
-        const aboutText = `
-About Me:
-I am a Linux System Administrator with a passion for automation and system optimization.
-[Add your personal description here]
-        `;
-        this.appendOutput(aboutText);
+        this.appendOutput(`${STYLES.SECTION('About Me')}
+${STYLES.LIST_ITEM('Supply Chain Professional with a passion for Linux and system administration')}
+${STYLES.LIST_ITEM('Combining operational experience with growing technical expertise')}
+
+${STYLES.SUBSECTION('Background')}
+${STYLES.LIST_ITEM('6+ years of hands-on Linux experience through personal projects and self-study')}
+${STYLES.LIST_ITEM('Experience in process optimization and system implementation')}
+${STYLES.LIST_ITEM('Strong foundation in data analysis and problem-solving')}
+${STYLES.LIST_ITEM('Proven ability to learn and implement new technologies')}
+
+${STYLES.SUBSECTION('Current Focus')}
+${STYLES.LIST_ITEM('Building practical experience with Linux system administration')}
+${STYLES.LIST_ITEM('Learning infrastructure automation and containerization')}
+${STYLES.LIST_ITEM('Applying analytical skills to technical challenges')}
+${STYLES.LIST_ITEM('Bridging operational and technical knowledge')}`);
     }
 
     skills() {
-        const skillsText = `
-Technical Skills:
-• Linux System Administration
-• Shell Scripting (Bash)
-• Configuration Management (Ansible, Puppet)
-• Cloud Services (AWS, GCP)
-• Containerization (Docker, Kubernetes)
-• Monitoring & Logging
-• Network Administration
-[Add/modify skills as needed]
-        `;
-        this.appendOutput(skillsText);
+        const skills = {
+            'Technical Skills': [
+                'Linux System Administration (Personal Projects)',
+                'Docker Container Management',
+                'Basic Shell Scripting',
+                'System Configuration',
+                'Hardware Integration',
+                'Virtualization'
+            ],
+            'Professional Experience': [
+                'Data Analysis',
+                'Process Optimization',
+                'System Implementation',
+                'Project Management',
+                'Technical Documentation',
+                'Team Collaboration'
+            ]
+        };
+
+        let output = '';
+        for (const [category, skillList] of Object.entries(skills)) {
+            output += `${STYLES.CATEGORY(category)}\n`;
+            skillList.forEach(skill => {
+                output += `${STYLES.LIST_ITEM(skill)}\n`;
+            });
+            output += '\n';
+        }
+        this.appendOutput(output);
     }
 
     projects() {
-        const projectsText = `
-Featured Projects:
-1. Automated Deployment Pipeline
-   - Description: [Add project description]
-   - Technologies: [Add technologies used]
+        const projects = [
+            {
+                name: 'Personal Linux Projects',
+                description: 'Hands-on experience with Linux system administration',
+                details: [
+                    'Built and maintained personal Arch Linux systems',
+                    'Created Docker-based media server environment',
+                    'Developed custom gaming systems with Linux',
+                    'Implemented backup solutions for personal infrastructure'
+                ]
+            },
+            {
+                name: 'Professional System Integration',
+                description: 'Experience from current role in warehouse operations',
+                details: [
+                    'Streamlined warehouse processes through system optimization',
+                    'Implemented data management solutions',
+                    'Created documentation for operational procedures',
+                    'Provided technical support for warehouse systems'
+                ]
+            }
+        ];
 
-2. Infrastructure Monitoring Solution
-   - Description: [Add project description]
-   - Technologies: [Add technologies used]
-
-[Add more projects as needed]
-        `;
-        this.appendOutput(projectsText);
-    }
-
-    contact() {
-        const contactText = `
-Contact Information:
-• Email: [Your Email]
-• LinkedIn: [Your LinkedIn]
-• GitHub: [Your GitHub]
-• Phone: [Your Phone Number]
-        `;
-        this.appendOutput(contactText);
-    }
-
-    changeTheme(args) {
-        const themeName = args ? args[0] : null;
-        const terminal = document.querySelector('.terminal');
-        
-        if (!themeName) {
-            const availableThemes = Object.keys(this.themes).join(', ');
-            this.appendOutput(`Available themes: ${availableThemes}`);
-            return;
-        }
-
-        if (this.themes[themeName]) {
-            // Remove all theme classes
-            Object.values(this.themes).forEach(theme => {
-                terminal.classList.remove(theme);
+        let output = '';
+        projects.forEach(project => {
+            output += `${STYLES.PROJECT_TITLE(project.name)}\n`;
+            output += `${STYLES.PROJECT_DESC(project.description)}\n`;
+            project.details.forEach(detail => {
+                output += `${STYLES.LIST_ITEM(detail)}\n`;
             });
-            
-            // Add new theme class
-            terminal.classList.add(this.themes[themeName]);
-            this.appendOutput(`Theme changed to ${themeName}`);
-        } else {
-            this.appendOutput(`Theme "${themeName}" not found. Available themes: ${Object.keys(this.themes).join(', ')}`);
-        }
+            output += `${STYLES.SEPARATOR()}\n\n`;
+        });
+        this.appendOutput(output);
+    }
+
+    pwd() {
+        this.appendOutput(this.currentPath);
     }
 
     systemMeltdown() {
-        const terminal = document.querySelector('.terminal');
-        const cursor = document.querySelector('.cursor');
-        
-        this.appendOutput('<span style="color: #b366ff; text-shadow: 0 0 8px #b366ff">Permission denied: Nice try! 😈</span>');
-        setTimeout(() => {
-            this.appendOutput('<span style="color: #b366ff; text-shadow: 0 0 8px #b366ff">Wait... what\'s happening?</span>');
+        try {
+            const messages = [
+                { text: 'Permission denied: Nice try! 😈', delay: 0 },
+                { text: 'Wait... what\'s happening?', delay: DELAYS.MELTDOWN_START },
+                { text: 'SYSTEM FAILURE IMMINENT', delay: DELAYS.MELTDOWN_WARNING, style: STYLES.MELTDOWN_WARNING }
+            ];
+
+            messages.forEach(({ text, delay, style = STYLES.MELTDOWN }) => {
+                setTimeout(() => {
+                    this.appendOutput(style(text));
+                }, delay);
+            });
+
             setTimeout(() => {
-                this.appendOutput('<span style="color: #b366ff; text-shadow: 0 0 8px #b366ff">SYSTEM FAILURE IMMINENT</span>');
-                terminal.style.animation = 'none';
-                terminal.offsetHeight; // Trigger reflow
-                terminal.style.animation = null;
-                terminal.classList.add('terminal-meltdown');
+                // Hide the terminal content first
+                this.output.style.opacity = '0';
+                this.inputLine.style.opacity = '0';
+                
+                // Add the meltdown effect to the entire terminal
+                document.querySelector('.terminal').classList.add('terminal-meltdown');
+                
                 setTimeout(() => {
                     this.clear();
-                    this.appendOutput('Just kidding! 😉');  // No purple glow after reset
-                    terminal.classList.remove('terminal-meltdown');
-                    // Reset cursor position
-                    cursor.style.left = '170px';
+                    // Remove the meltdown effect
+                    document.querySelector('.terminal').classList.remove('terminal-meltdown');
+                    // Show the content again
+                    this.output.style.opacity = '1';
+                    this.inputLine.style.opacity = '1';
+                    this.appendOutput('Just kidding! 😉');
+                    this.resetCursor();
                     this.input.value = '';
-                }, 3000);
-            }, 2000);  // Increased from 1000 to 2000
-        }, 1500);  // Increased from 500 to 1500
+                }, DELAYS.MELTDOWN_COMPLETE);
+            }, DELAYS.MELTDOWN_WARNING + DELAYS.MELTDOWN_START);
+        } catch (error) {
+            console.error('Meltdown effect failed:', error);
+            this.clear();
+            this.appendOutput('System restored from backup.');
+        }
     }
 
     fakeHack() {
@@ -354,93 +440,21 @@ Contact Information:
             'HACK COMPLETE! Just kidding 😎'
         ];
         
-        let i = 0;
-        const interval = setInterval(() => {
-            if (i < steps.length) {
-                this.appendOutput(steps[i]);
-                i++;
-            } else {
-                clearInterval(interval);
-            }
-        }, 1000);
+        steps.forEach((step, index) => {
+            setTimeout(() => {
+                this.appendOutput(STYLES.HACK(step));
+            }, index * DELAYS.HACK_STEP);
+        });
     }
 
-    pwd() {
-        this.appendOutput(this.currentPath);
+    destroy() {
+        // Clean up event listeners when terminal is destroyed
+        this.input.removeEventListener('keydown', this.handleKeydown);
+        this.input.removeEventListener('input', this.handleInput);
     }
 }
-// Initialize the terminal when the page loads
+
 document.addEventListener('DOMContentLoaded', () => {
     new Terminal();
 });
-
-// Add this after Terminal class initialization
-function createStarField() {
-    const starField = document.createElement('div');
-    starField.className = 'star-field';
-    document.body.appendChild(starField);
-
-    for (let i = 0; i < 50; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        
-        // Keep the larger size
-        const size = Math.random() * 4 + 4;
-        star.style.width = `${size}px`;
-        star.style.height = `${size}px`;
-        
-        // Random position
-        star.style.left = `${Math.random() * 100}vw`;
-        star.style.top = `${Math.random() * 100}vh`;
-        
-        // Much slower animation (30-45 seconds)
-        const duration = Math.random() * 15 + 30;
-        star.style.setProperty('--duration', `${duration}s`);
-        star.style.animationName = `starMove${Math.floor(Math.random() * 3) + 1}`;
-        
-        starField.appendChild(star);
-    }
-}
-
-function addRandomGlitch() {
-    const terminal = document.querySelector('.terminal');
-    
-    setInterval(() => {
-        // Random chance to trigger glitch
-        if (Math.random() < 0.1) { // 10% chance every check
-            terminal.classList.add('screen-glitch');
-            
-            // Remove class after animation completes
-            setTimeout(() => {
-                terminal.classList.remove('screen-glitch');
-            }, 3000);
-        }
-    }, 10000); // Check every 10 seconds
-}
-
-function createCustomCursor() {
-    const cursor = document.createElement('div');
-    cursor.className = 'custom-cursor';
-    document.body.appendChild(cursor);
-
-    // Track if mouse has moved
-    let hasMouseMoved = false;
-
-    document.addEventListener('mousemove', (e) => {
-        if (!hasMouseMoved) {
-            hasMouseMoved = true;
-            cursor.style.opacity = '1';
-        }
-        
-        cursor.style.left = `${e.clientX}px`;
-        cursor.style.top = `${e.clientY}px`;
-        
-        const isOverInput = e.target.classList.contains('terminal-input');
-        cursor.classList.toggle('text', isOverInput);
-    });
-}
-
-createStarField();
-addRandomGlitch();
-createCustomCursor();
 
