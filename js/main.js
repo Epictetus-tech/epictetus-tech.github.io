@@ -173,9 +173,9 @@ class Terminal {
 ██║ ╚═╝ ██║╚████╔╝ ╚██████╔╝     Shell: bash 5.1.16
 ╚═╝     ╚═╝ ╚═══╝   ╚════██╗     Terminal: ${systemInfo.browser}
                          ╚═╝     CPU: ${systemInfo.cpu}
-                                Memory: ${systemInfo.memory.used}MB / ${systemInfo.memory.total}MB
-                                Disk: ${systemInfo.disk.used}GB / ${systemInfo.disk.total}GB
-                                Resolution: ${systemInfo.resolution}</span>
+                                 Memory: ${systemInfo.memory.used}MB / ${systemInfo.memory.total}MB
+                                 Disk: ${systemInfo.disk.used}GB / ${systemInfo.disk.total}GB
+                                 Resolution: ${systemInfo.resolution}</span>
 
 <span style="color: #00ff00">Welcome to my interactive terminal portfolio!</span>
 Type '<span class="command">help</span>' to see available commands.
