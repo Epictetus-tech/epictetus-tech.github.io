@@ -1,0 +1,239 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+body {
+    background-color: #1a1a1a;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: radial-gradient(circle at center, #252525 0%, #1a1a1a 100%);
+    position: relative;
+    z-index: 0;
+}
+
+.terminal {
+    width: 90%;
+    max-width: 1400px;
+    height: 90vh;
+    background-color: var(--bg-color, #2b2b2b);
+    border-radius: 8px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6),
+                0 0 50px rgba(255, 140, 66, 0.1),
+                0 0 70px rgba(0, 255, 0, 0.05);
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+}
+
+.terminal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        transparent 50%,
+        rgba(0, 0, 0, 0.05) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+}
+
+.terminal-header {
+    background-color: var(--header-bg, #3c3c3c);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+}
+
+.terminal-buttons {
+    display: flex;
+    gap: 8px;
+    margin-left: 20px;
+}
+
+.terminal-buttons span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.close { background-color: #ff5f56; }
+.minimize { background-color: #ffbd2e; }
+.maximize { background-color: #27c93f; }
+
+.terminal-title {
+    color: #fff;
+    font-size: 14px;
+    margin-left: 0;
+}
+
+.terminal-content {
+    padding: 20px;
+    height: calc(100% - 40px);
+    overflow-y: auto;
+    color: var(--text-color, #00ff00);
+}
+
+.terminal-input-line {
+    display: flex;
+    gap: 10px;
+}
+
+.prompt {
+    color: var(--prompt-color, #00ff00);
+}
+
+.terminal-input {
+    background: none;
+    border: none;
+    color: var(--text-color, #00ff00);
+    font-size: 16px;
+    outline: none;
+    width: 100%;
+}
+
+.terminal-output {
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+}
+
+@media (max-width: 600px) {
+    .terminal {
+        height: 90vh;
+        width: 95%;
+    }
+    
+    .terminal-title {
+        font-size: 12px;
+    }
+    
+    .terminal-content {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .terminal-input {
+        font-size: 14px;
+    }
+
+    .terminal-input-line {
+        gap: 5px;
+    }
+
+    .banner-text {
+        font-size: 10px;
+        white-space: pre;
+        display: block;
+        line-height: 1.2;
+    }
+}
+
+.glow-orange {
+    color: #cc7000;
+    text-shadow: 0 0 5px #cc7000, 0 0 10px #cc7000;
+}
+
+.command {
+    color: #cc7000;
+    text-shadow: 0 0 5px #cc7000, 0 0 10px #cc7000;
+    font-weight: bold;
+}
+
+.banner-text {
+    color: #ff8c42;
+    text-shadow: 0 0 5px #ff8c42, 0 0 10px #ff8c42;
+}
+
+.terminal-theme-default {
+    --bg-color: #2b2b2b;
+    --text-color: #00ff00;
+    --header-bg: #3c3c3c;
+    --prompt-color: #00ff00;
+}
+
+.terminal-theme-matrix {
+    --bg-color: #000000;
+    --text-color: #00ff00;
+    --header-bg: #001100;
+    --prompt-color: #00ff00;
+}
+
+.terminal-theme-ubuntu {
+    --bg-color: #300a24;
+    --text-color: #ffffff;
+    --header-bg: #3c0b2c;
+    --prompt-color: #ff8c42;
+}
+
+.terminal-theme-light {
+    --bg-color: #f5f5f5;
+    --text-color: #2e3436;
+    --header-bg: #e4e4e4;
+    --prompt-color: #2c5d8d;
+}
+
+/* Override glow colors for light theme */
+.terminal-theme-light .command {
+    color: #2c5d8d;
+    text-shadow: 0 0 5px #2c5d8d, 0 0 10px #2c5d8d;
+    font-weight: bold;
+}
+
+.terminal-theme-light .banner-text {
+    color: #2c5d8d;
+    text-shadow: 0 0 5px #2c5d8d, 0 0 10px #2c5d8d;
+}
+
+.terminal-theme-light .glow-orange {
+    color: #2c5d8d;
+    text-shadow: 0 0 5px #2c5d8d, 0 0 10px #2c5d8d;
+}
+
+@keyframes melt {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0) rotate(15deg);
+        opacity: 0;
+        filter: blur(10px);
+    }
+}
+
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+        filter: hue-rotate(0deg);
+    }
+    25% {
+        transform: translate(-10px, 5px);
+        filter: hue-rotate(90deg);
+    }
+    50% {
+        transform: translate(10px, -5px);
+        filter: hue-rotate(180deg);
+    }
+    75% {
+        transform: translate(-5px, 10px);
+        filter: hue-rotate(270deg);
+    }
+    100% {
+        transform: translate(0);
+        filter: hue-rotate(360deg);
+    }
+}
+
+.terminal-meltdown {
+    animation: melt 2s forwards, glitch 0.2s infinite;
+}
