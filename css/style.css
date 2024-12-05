@@ -14,69 +14,67 @@ body {
     padding: 20px;
     background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
     position: relative;
-    z-index: 0;
+    overflow: hidden;
 }
 
+/* Create multiple layers of stars */
+@keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+}
+
+@keyframes float {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* First star layer - small, fast twinkling */
 body::before {
     content: '';
     position: fixed;
     width: 100%;
     height: 100%;
-    background: none;
-    pointer-events: none;
-    z-index: -1;
-    animation: createStars 0.1s linear infinite;
-    will-change: box-shadow;
-    backface-visibility: hidden;
+    background-image: 
+        radial-gradient(1px 1px at 25% 25%, white 1px, transparent 0),
+        radial-gradient(1px 1px at 75% 75%, white 1px, transparent 0),
+        radial-gradient(2px 2px at 50% 50%, white 1px, transparent 0);
+    background-size: 150px 150px;
+    animation: twinkle 3s infinite alternate;
+    opacity: 0.3;
+    z-index: -3;
 }
 
-@keyframes starMove1 {
-    from { transform: translate(0, 0) rotate(0deg); }
-    to { transform: translate(50vw, 50vh) rotate(180deg); }
-}
-
-@keyframes starMove2 {
-    from { transform: translate(0, 0) rotate(0deg); }
-    to { transform: translate(-50vw, 50vh) rotate(-180deg); }
-}
-
-@keyframes starMove3 {
-    from { transform: translate(0, 0) rotate(0deg); }
-    to { transform: translate(50vw, -50vh) rotate(-180deg); }
-}
-
-@keyframes createStars {
-    0% { box-shadow: 
-        10vw 10vh 2px rgba(255, 255, 255, 0.3),
-        20vw 20vh 3px rgba(255, 255, 255, 0.2),
-        30vw 30vh 4px rgba(255, 255, 255, 0.1),
-        40vw 40vh 2px rgba(255, 255, 255, 0.3),
-        50vw 50vh 3px rgba(255, 255, 255, 0.2),
-        60vw 60vh 4px rgba(255, 255, 255, 0.1),
-        70vw 70vh 2px rgba(255, 255, 255, 0.3),
-        80vw 80vh 3px rgba(255, 255, 255, 0.2),
-        90vw 90vh 4px rgba(255, 255, 255, 0.1);
-    }
-    100% { box-shadow: 
-        15vw 15vh 2px rgba(255, 255, 255, 0.3),
-        25vw 25vh 3px rgba(255, 255, 255, 0.2),
-        35vw 35vh 4px rgba(255, 255, 255, 0.1),
-        45vw 45vh 2px rgba(255, 255, 255, 0.3),
-        55vw 55vh 3px rgba(255, 255, 255, 0.2),
-        65vw 65vh 4px rgba(255, 255, 255, 0.1),
-        75vw 75vh 2px rgba(255, 255, 255, 0.3),
-        85vw 85vh 3px rgba(255, 255, 255, 0.2),
-        95vw 95vh 4px rgba(255, 255, 255, 0.1);
-    }
-}
-
-.star-field {
+/* Second star layer - medium stars, slower twinkling */
+body::after {
+    content: '';
     position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
+    background-image: 
+        radial-gradient(1.5px 1.5px at 10% 10%, white 1px, transparent 0),
+        radial-gradient(1.5px 1.5px at 90% 90%, white 1px, transparent 0),
+        radial-gradient(2.5px 2.5px at 60% 30%, white 1px, transparent 0);
+    background-size: 200px 200px;
+    animation: twinkle 5s infinite alternate-reverse;
+    opacity: 0.2;
+    z-index: -2;
+}
+
+/* Add floating nebula effect */
+.star-field {
+    position: fixed;
+    top: -20%;
+    left: -20%;
+    width: 140%;
+    height: 140%;
     z-index: -1;
+    background: 
+        radial-gradient(circle at 30% 50%, rgba(76, 175, 80, 0.15) 0%, transparent 70%),  /* Green nebula */
+        radial-gradient(circle at 70% 50%, rgba(33, 150, 243, 0.15) 0%, transparent 70%),  /* Blue nebula */
+        radial-gradient(circle at 50% 80%, rgba(156, 39, 176, 0.1) 0%, transparent 70%);   /* Purple nebula */
+    animation: float 15s infinite ease-in-out;
+    pointer-events: none;
 }
 
 .star {
@@ -102,6 +100,7 @@ body::before {
     animation: startup 0.8s cubic-bezier(0.17, 0.84, 0.44, 1);
     transform-origin: center center;
     will-change: transform, opacity;
+    transition: filter 0.3s ease-in-out;
 }
 
 .terminal::before {
@@ -133,7 +132,8 @@ body::before {
     background-size: 100% 4px;
     z-index: 2;
     pointer-events: none;
-    animation: flicker 0.15s infinite;
+    animation: flicker 0.15s infinite, crtFlicker 0.15s infinite;
+    opacity: 0;
 }
 
 .terminal-header {
@@ -161,10 +161,16 @@ body::before {
     border-radius: 50%;
     transition: all 0.2s ease;
     box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
+    transform: scale(1);
 }
 
 .terminal-buttons span:hover {
+    transform: scale(1.1);
     filter: brightness(1.2);
+}
+
+.terminal-buttons span:active {
+    transform: scale(0.95);
 }
 
 .close { 
@@ -184,6 +190,8 @@ body::before {
     font-size: 14px;
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
     opacity: 0.9;
+    letter-spacing: 0.5px;
+    font-weight: 500;
 }
 
 .terminal-content {
@@ -193,6 +201,26 @@ body::before {
     color: #00ff00;
     animation: textShadow 1.6s infinite;
     transition: visibility 0s, opacity 0.3s ease;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(76, 175, 80, 0.3) transparent;
+}
+
+.terminal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.terminal-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.terminal-content::-webkit-scrollbar-thumb {
+    background-color: rgba(76, 175, 80, 0.3);
+    border-radius: 4px;
+    border: 2px solid transparent;
+}
+
+.terminal-content::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(76, 175, 80, 0.5);
 }
 
 .terminal-input-line {
@@ -203,6 +231,16 @@ body::before {
     align-items: center;
     transition: opacity 0.3s ease;
     height: 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    animation: pulse 2s infinite;
+    opacity: 0;
+}
+
+@keyframes pulse {
+    0% { background: rgba(255, 255, 255, 0.05); }
+    50% { background: rgba(255, 255, 255, 0.1); }
+    100% { background: rgba(255, 255, 255, 0.05); }
 }
 
 .prompt {
@@ -394,24 +432,32 @@ body::before {
 @keyframes screenGlitch {
     0% {
         transform: translate(0);
-        opacity: 1;
+        filter: none;
     }
-    1% {
-        transform: translate(-5px);
-        opacity: 0.8;
+    20% {
+        transform: translate(-10px);
+        filter: hue-rotate(90deg);
     }
-    2% {
-        transform: translate(5px);
-        opacity: 0.9;
+    40% {
+        transform: translate(10px);
+        filter: hue-rotate(180deg);
     }
-    3% {
+    60% {
+        transform: translate(-15px);
+        filter: hue-rotate(270deg);
+    }
+    80% {
+        transform: translate(15px);
+        filter: hue-rotate(360deg);
+    }
+    100% {
         transform: translate(0);
-        opacity: 1;
+        filter: none;
     }
 }
 
 .screen-glitch {
-    animation: screenGlitch 3s steps(1) !important;
+    animation: screenGlitch 0.2s infinite !important;
 }
 
 /* Add these styles */
@@ -473,4 +519,331 @@ body,
         padding: 5px;
         font-size: 12px;
     }
+}
+
+.evil-mode {
+    background-color: #1a0000 !important;
+    box-shadow: 0 0 20px #ff0000, inset 0 0 30px rgba(255, 0, 0, 0.3) !important;
+}
+
+.evil-mode * {
+    border-color: rgba(255, 0, 0, 0.3) !important;
+}
+
+.evil-mode .terminal-content,
+.evil-mode .terminal-input,
+.evil-mode .terminal-output,
+.evil-mode .prompt,
+.evil-mode .terminal-input-line {
+    color: #ff3333 !important;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.5) !important;
+}
+
+.evil-mode .terminal-header {
+    background: linear-gradient(to bottom, #400000, #300000) !important;
+    border-bottom: 1px solid rgba(255, 0, 0, 0.3) !important;
+}
+
+/* Add visual separation between commands */
+.terminal-output > div {
+    margin: 10px 0;
+    padding: 8px;
+    border-left: 2px solid #1a4a1a;  /* Subtle green border */
+    transition: border-color 0.3s ease;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.terminal-output > div:hover {
+    border-left-color: #4CAF50;  /* Brighter on hover */
+}
+
+/* Make section headers more prominent */
+.terminal-output .section-title {
+    font-size: 1.2em;
+    color: #4CAF50;
+    text-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+    margin: 15px 0 10px 0;
+}
+
+/* Style list items better */
+.terminal-output .list-item {
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+}
+
+/* Add subtle hover effect to list items */
+.terminal-output .list-item:hover {
+    background: rgba(76, 175, 80, 0.05);
+    border-radius: 3px;
+}
+
+/* Make command outputs more distinct */
+.terminal-output .command-output {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 10px;
+    margin: 5px 0;
+    border-left: 3px solid #4CAF50;
+}
+
+/* Style subsections */
+.terminal-output .subsection {
+    margin-top: 15px;
+    padding-left: 15px;
+    border-left: 2px solid rgba(76, 175, 80, 0.3);
+}
+
+/* Command output styling */
+.success-text {
+    color: #ffff00;
+    text-shadow: 0 0 5px #ffff00;
+}
+
+.welcome-text {
+    color: #00ff00;
+}
+
+.warning-text {
+    color: #ff3333;
+    opacity: 0.8;
+    text-shadow: 0 0 5px #ff0000;
+}
+
+.meltdown-text {
+    color: #b366ff;
+    text-shadow: 0 0 8px #b366ff;
+}
+
+.hack-text {
+    color: #ff0000;
+    text-shadow: 0 0 8px #ff0000;
+    font-weight: bold;
+}
+
+.forbidden-text {
+    color: #ff0000;
+    text-shadow: 0 0 10px #ff0000;
+    font-weight: bold;
+    opacity: 1;
+}
+
+.category-text {
+    color: #FF69B4;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 105, 180, 0.3);
+}
+
+.separator {
+    color: #666;
+}
+
+.meltdown-warning {
+    color: #ff0000;
+    animation: warningFlash 0.5s linear infinite;
+}
+
+/* Keep the existing section styling */
+.section-title {
+    font-size: 1.2em;
+    color: #4CAF50;
+    text-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+    margin: 15px 0 10px 0;
+}
+
+.project-title {
+    color: #FFA500;
+    font-weight: bold;
+    font-size: 1.1em;
+    text-shadow: 0 0 5px rgba(255, 165, 0, 0.5);
+}
+
+.project-desc {
+    color: #87CEEB;
+    font-style: italic;
+    margin-left: 4px;
+}
+
+::selection {
+    background: rgba(76, 175, 80, 0.3);
+    color: #fff;
+    text-shadow: none;
+}
+
+.terminal-input::selection {
+    background: rgba(76, 175, 80, 0.5);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(2px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Add this new style */
+.evil-welcome {
+    color: #ff0000;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: evilPulse 2s infinite;
+    display: block;
+    margin-top: 10px;
+}
+
+@keyframes evilPulse {
+    0% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; }
+    50% { text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000; }
+    100% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; }
+}
+
+/* Update evil mode styles */
+.evil-mode .cursor {
+    color: #ff0000 !important;
+    background-color: #ff0000 !important;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Evil mode terminal buttons */
+.evil-mode .close {
+    background: linear-gradient(to bottom, #ff0000, #cc0000) !important;
+    box-shadow: inset 0 0 3px rgba(255, 0, 0, 0.5) !important;
+}
+
+.evil-mode .minimize {
+    background: linear-gradient(to bottom, #ff3333, #cc0000) !important;
+    box-shadow: inset 0 0 3px rgba(255, 0, 0, 0.5) !important;
+}
+
+.evil-mode .maximize {
+    background: linear-gradient(to bottom, #ff0000, #cc0000) !important;
+    box-shadow: inset 0 0 3px rgba(255, 0, 0, 0.5) !important;
+}
+
+.evil-mode .terminal-buttons span:hover {
+    filter: brightness(1.3) !important;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.5) !important;
+}
+
+/* Existing media query improvements and new ones */
+@media (max-width: 1200px) {
+    .terminal {
+        width: 98%;  /* Slightly wider on medium screens */
+        max-width: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .terminal-content {
+        padding: 15px;
+        font-size: 14px;
+    }
+
+    .banner-text {
+        font-size: 10px;  /* Adjust ASCII art size */
+        line-height: 1.2;
+    }
+
+    .terminal-buttons span {
+        width: 10px;
+        height: 10px;
+    }
+
+    .terminal-input {
+        font-size: 14px;
+    }
+
+    /* Adjust project display */
+    .project-title {
+        font-size: 1em;
+        word-break: break-word;
+    }
+
+    .project-desc {
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    .terminal {
+        height: 98vh;  /* More vertical space on mobile */
+        width: 100%;
+        margin: 0;
+        border-radius: 0;  /* Full screen on small devices */
+    }
+
+    .terminal-content {
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .terminal-header {
+        padding: 8px;
+    }
+
+    .banner-text {
+        font-size: 8px;  /* Even smaller ASCII art */
+        white-space: pre-wrap;  /* Allow wrapping if needed */
+    }
+
+    /* Adjust command prompt */
+    .prompt {
+        font-size: 12px;
+    }
+
+    .cursor {
+        height: 14px;
+    }
+
+    /* Better spacing for mobile */
+    .terminal-output > div {
+        margin: 8px 0;
+        padding: 6px;
+    }
+}
+
+/* Handle very tall screens */
+@media (min-height: 1200px) {
+    .terminal {
+        height: 90vh;
+        max-height: 1200px;  /* Prevent excessive height */
+    }
+}
+
+/* Handle ultra-wide screens */
+@media (min-width: 2000px) {
+    .terminal {
+        max-width: 2000px;  /* Prevent excessive width */
+    }
+}
+
+/* Handle landscape mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    .terminal {
+        height: 98vh;
+    }
+
+    .terminal-content {
+        height: calc(98vh - 40px);
+    }
+}
+
+@keyframes spinIn {
+    0% {
+        transform: rotate(0deg) scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: rotate(720deg) scale(1.5);
+        opacity: 1;
+    }
+    100% {
+        transform: rotate(1080deg) scale(1);
+        opacity: 1;
+    }
+}
+
+.spin-text {
+    display: inline-block;
+    animation: spinIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
