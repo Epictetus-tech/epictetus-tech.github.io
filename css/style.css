@@ -344,6 +344,33 @@ body::after {
 .banner-text {
     color: #ff8c42;
     text-shadow: 0 0 5px #ff8c42, 0 0 10px #ff8c42;
+    animation: asciiPulse 3s ease-in-out infinite;
+    display: inline-block;
+}
+
+@keyframes asciiPulse {
+    0% {
+        text-shadow: 0 0 5px #ff8c42, 0 0 10px #ff8c42;
+    }
+    50% {
+        text-shadow: 0 0 10px #ff8c42, 0 0 20px #ff8c42, 0 0 30px #ff8c42;
+        transform: scale(1.01);
+    }
+    100% {
+        text-shadow: 0 0 5px #ff8c42, 0 0 10px #ff8c42;
+    }
+}
+
+/* Add rainbow effect for evil mode */
+.evil-mode .banner-text {
+    animation: evilAscii 3s linear infinite;
+}
+
+@keyframes evilAscii {
+    0% { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+    33% { color: #ff3333; text-shadow: 0 0 15px #ff3333; }
+    66% { color: #ff0000; text-shadow: 0 0 20px #ff0000; }
+    100% { color: #ff3333; text-shadow: 0 0 10px #ff3333; }
 }
 
 .terminal-meltdown {
@@ -846,4 +873,50 @@ body,
 .spin-text {
     display: inline-block;
     animation: spinIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.matrix-mode {
+    background-color: #000 !important;
+    transition: all 0.5s ease;
+}
+
+.matrix-mode .terminal-content {
+    background-color: #000 !important;
+}
+
+.matrix-mode .terminal-header {
+    background: linear-gradient(to bottom, #000, #001100) !important;
+}
+
+.matrix-text {
+    color: #00ff00 !important;
+    text-shadow: 0 0 10px #00ff00 !important;
+    font-size: 1.2em;
+    font-weight: bold;
+    letter-spacing: 2px;
+    animation: matrixGlow 2s infinite;
+    display: block;
+    margin: 20px 0;
+}
+
+@keyframes matrixGlow {
+    0% { text-shadow: 0 0 10px #00ff00; }
+    50% { text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; }
+    100% { text-shadow: 0 0 10px #00ff00; }
+}
+
+.matrix-rain {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+}
+
+.matrix-text {
+    position: relative;
+    z-index: 1;
 }

@@ -83,7 +83,8 @@ class Terminal {
             this.easterEggs = {
                 'sudo rm -rf /': this.systemMeltdown.bind(this),
                 'hack': this.fakeHack.bind(this),
-                'exit': this.exitEvilMode.bind(this)
+                'exit': this.exitEvilMode.bind(this),
+                'matrix': this.matrixMode.bind(this)
             };
 
             // Bind event handlers once
@@ -210,15 +211,14 @@ class Terminal {
     getWelcomeText() {
         return `${STYLES.WELCOME('Welcome to my Interactive Terminal Portfolio')}
 
-${STYLES.SUCCESS('Navigation Guide:')}
-• Type ${STYLES.SUCCESS('about')} to learn about my professional background
-• Use ${STYLES.SUCCESS('skills')} to explore my technical expertise
-• Try ${STYLES.SUCCESS('projects')} to view my implemented solutions
+${STYLES.SUCCESS('Quick Start:')}
 • Type ${STYLES.SUCCESS('help')} to see all available commands
+• Use ${STYLES.SUCCESS('↑/↓')} arrow keys to navigate command history
 
 ${STYLES.WARNING('FORBIDDEN COMMANDS - DO NOT USE:')}
 ${STYLES.FORBIDDEN('• sudo rm -rf /')}     [SYSTEM DESTRUCTION]
 ${STYLES.FORBIDDEN('• hack')}              [SECURITY BREACH]
+${STYLES.FORBIDDEN('• matrix')}            [REALITY DISTORTION]
 
 Begin exploring by entering a command below ⬇️`;
     }
@@ -652,8 +652,10 @@ ${STYLES.LIST_ITEM('Expanding cloud technology expertise')}`);
                 this.cursorPosition = CURSOR_BASE_POSITION;
                 this.resetCursor();
                 
-                // Optional: Add a subtle message
+                // Clear screen and show restored message
+                this.clear();
                 this.appendOutput(STYLES.SUCCESS('System restored to normal operation.'));
+                this.appendOutput(STYLES.SUCCESS('Type "help" to see available commands'));
             }, 1000);
         }
     }
@@ -672,6 +674,107 @@ ${STYLES.LIST_ITEM('Expanding cloud technology expertise')}`);
             prompt.textContent = newPrompt;
         });
         this.resetCursor();
+    }
+
+    matrixMode() {
+        try {
+            const terminal = document.querySelector('.terminal');
+            terminal.classList.add('matrix-mode');
+            
+            // Create canvas for falling characters
+            const canvas = document.createElement('canvas');
+            canvas.classList.add('matrix-rain');
+            terminal.appendChild(canvas);
+            
+            // Initialize matrix rain
+            this.initMatrixRain(canvas);
+            
+            // Clear existing content
+            this.clear();
+            this.inputLine.style.opacity = '0';
+            
+            // Matrix text effect with green glow
+            const messages = [
+                { text: 'Wake up, Neo...', delay: 1000 },
+                { text: 'The Matrix has you...', delay: 3000 },
+                { text: 'Follow the white rabbit.', delay: 5000 },
+                { text: 'Knock, knock, Neo.', delay: 7000 }
+            ];
+
+            messages.forEach(({ text, delay }) => {
+                setTimeout(() => {
+                    terminal.classList.add('screen-glitch');
+                    setTimeout(() => terminal.classList.remove('screen-glitch'), 200);
+                    this.appendOutput(`<span class="matrix-text">${text}</span>`);
+                }, delay);
+            });
+
+            // Return to normal after sequence
+            setTimeout(() => {
+                terminal.classList.add('screen-glitch');
+                setTimeout(() => {
+                    terminal.classList.remove('screen-glitch');
+                    terminal.classList.remove('matrix-mode');
+                    canvas.remove();  // Remove the rain effect
+                    this.clear();
+                    this.inputLine.style.opacity = '1';
+                    this.appendOutput(STYLES.SUCCESS('Type "help" to see available commands'));
+                }, 200);
+            }, 8000);
+
+        } catch (error) {
+            console.error('Matrix effect failed:', error);
+            this.clear();
+            this.appendOutput('System restored.');
+            this.appendOutput(STYLES.SUCCESS('Type "help" to see available commands'));
+            this.inputLine.style.opacity = '1';
+        }
+    }
+
+    initMatrixRain(canvas) {
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+
+        const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const fontSize = 14;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = new Array(columns).fill(1);
+
+        function draw() {
+            // Create fade effect
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw characters
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                const x = i * fontSize;
+                const y = drops[i] * fontSize;
+
+                // Bright leading character
+                if (drops[i] * fontSize < canvas.height && Math.random() > 0.975) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                } else {
+                    ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+                }
+
+                ctx.font = `${fontSize}px monospace`;
+                ctx.fillText(text, x, y);
+
+                // Reset drop
+                if (y > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+
+            if (canvas.parentElement) {
+                requestAnimationFrame(draw);
+            }
+        }
+
+        draw();
     }
 }
 
