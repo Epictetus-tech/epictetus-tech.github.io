@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive Terminal Portfolio - A unique command-line interface portfolio">
+    <meta name="keywords" content="portfolio, terminal, developer, interactive">
+    <meta name="author" content="Miguel Justin Quintero">
+    <meta property="og:title" content="Terminal Portfolio | Miguel Quintero">
+    <meta property="og:description" content="Interactive Terminal Portfolio - A unique command-line interface portfolio">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#00ff00">
+    <title>Terminal Portfolio</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../img/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../img/apple-touch-icon.png">
+</head>
+<body>
+    <noscript>
+        <div style="color: #fff; text-align: center; padding: 2rem;">
+            This terminal interface requires JavaScript to function. Please enable JavaScript to continue.
+        </div>
+    </noscript>
+    <div class="star-field"></div>
+    <div class="terminal" role="application" aria-label="Terminal Interface">
+        <div class="terminal-header">
+            <div class="terminal-buttons" role="toolbar" aria-label="Terminal Controls">
+                <span class="close" role="button" aria-label="Close"></span>
+                <span class="minimize" role="button" aria-label="Minimize"></span>
+                <span class="maximize" role="button" aria-label="Maximize"></span>
+            </div>
+            <div class="terminal-title">user@portfolio:~</div>
+        </div>
+        <div class="terminal-content">
+            <div class="terminal-output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">user@portfolio:~$</span>
+                <input type="text" class="terminal-input" autofocus>
+                <span class="cursor">█</span>
+            </div>
+        </div>
+    </div>
+    <script src="js/main.js"></script>
+</body>
+</html>
