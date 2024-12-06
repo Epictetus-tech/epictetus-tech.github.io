@@ -85,6 +85,46 @@ body {
     isolation: isolate;
 }
 
+.hero-content {
+    max-width: 1200px;
+    width: 100%;
+    margin-top: 2rem;
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 1s ease-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hero-description {
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+    text-align: center;
+}
+
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    background: var(--accent-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: transform var(--transition-speed);
+    cursor: pointer;
+}
+
+.cta-button:hover {
+    transform: translateY(-2px);
+}
+
 .hero::before {
     content: '';
     position: absolute;
@@ -440,8 +480,6 @@ body {
                 0 0 2px rgba(96, 165, 250, 0.2);
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 1.5rem;
     height: 100%;
 }
 
@@ -456,7 +494,6 @@ body {
 .skill-icon {
     width: 64px;
     height: 64px;
-    margin: 0;
     background: var(--accent-color);
     border-radius: 50%;
     display: flex;
@@ -464,7 +501,7 @@ body {
     justify-content: center;
     font-size: 1.8rem;
     color: white;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin: 0 auto 1.5rem;
 }
 
 .skill-card:hover .skill-icon {
@@ -475,9 +512,13 @@ body {
 .skill-card h3 {
     color: var(--primary-color);
     font-size: 1.5rem;
-    padding-left: 0;
-    margin: 0;
-    text-align: left;
+    margin: 0 0 1.5rem;
+    text-align: center;
+    min-height: 3.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
 }
 
 .skill-card:hover h3 {
@@ -487,52 +528,45 @@ body {
 .skill-list {
     list-style: none;
     padding: 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin: 0;
-    width: 100%;
+    gap: 0.8rem;
 }
 
 .skill-list li {
-    position: relative;
-    transition: all 0.3s ease;
-    padding: 0.5rem;
-    border-radius: 6px;
-    color: var(--text-muted);
-    padding-left: 1.5rem;
+    color: var(--text-color);
     font-size: 1.1rem;
-    text-align: left;
-    line-height: 1.4;
-    width: 100%;
-}
-
-.skill-list li::before {
-    content: '→';
-    color: var(--accent-color);
-    position: absolute;
-    left: 0.3rem;
-    top: 0.5rem;
-    font-weight: bold;
-    transition: transform 0.3s ease;
-    opacity: 0.8;
-    font-size: 1.2rem;
-    line-height: 1.4;
-}
-
-.skill-list li + li {
-    margin-top: 0.3rem;
+    text-align: center;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    transition: all 0.3s ease;
 }
 
 .skill-list li:hover {
-    background: rgba(var(--accent-rgb), 0.05);
+    background: rgba(var(--accent-rgb), 0.1);
     transform: translateY(-2px);
-    color: var(--primary-color);
+    color: var(--text-bright);
 }
 
-.skill-list li:hover::before {
-    transform: translateX(3px);
-    opacity: 1;
+.skill-description {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin: 0 0 1.5rem;
+    text-align: center;
+    line-height: 1.5;
+    min-height: 4.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .skill-list li {
+        font-size: 1rem;
+        padding: 0.4rem 0.8rem;
+    }
 }
 
 /* Hero Content */
@@ -543,6 +577,10 @@ body {
     position: relative;
     z-index: 1;
     animation: fadeInUp 1s ease-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 @keyframes fadeInUp {
@@ -556,23 +594,13 @@ body {
     }
 }
 
-.hero-description {
-    max-width: 600px;
-    margin: 0 auto;
-    font-size: 1.5rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
-    line-height: 1.4;
-    margin-bottom: 3rem;
-}
-
 .hero-stats {
     display: flex;
     gap: 2rem;
     flex-wrap: wrap;
     justify-content: center;
-    margin: 2rem 0;
-    animation: fadeIn 1s ease-out 0.5s backwards;
+    margin: 2rem auto;
+    width: 100%;
 }
 
 @keyframes fadeIn {
@@ -634,8 +662,6 @@ body {
     font-weight: 500;
     transition: transform var(--transition-speed);
     cursor: pointer;
-    position: relative;
-    z-index: 2;
 }
 
 .cta-button:hover {
@@ -644,8 +670,9 @@ body {
 
 /* Footer */
 .main-footer {
-    background: var(--background-color);
+    background: var(--background-alt);
     padding: 2rem;
+    text-align: center;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -804,8 +831,9 @@ body {
 
 /* Contact Section */
 #contact {
+    background: var(--background-color);
     padding: 4rem 2rem;
-    background: var(--background-alt);
+    position: relative;
 }
 
 .contact-grid {
@@ -1034,5 +1062,197 @@ body {
     
     .contact-card:active {
         transform: translateY(-5px);
+    }
+}
+
+/* Add mobile responsiveness for hero section */
+@media (max-width: 768px) {
+    .hero {
+        min-height: 100vh;
+        height: auto;
+        padding: 6rem 1rem 3rem;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .hero-title {
+        font-size: 1.2rem;
+    }
+
+    .hero-content {
+        width: 100%;
+    }
+
+    .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 0 1rem;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-number {
+        font-size: 1.8rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 5rem 1rem 2rem;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero-title {
+        font-size: 1rem;
+    }
+
+    .hero-stats {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+
+    .stat-card {
+        padding: 0.8rem;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+    }
+}
+
+/* Companies Section */
+.companies-section {
+    background: var(--background-alt);
+    padding: 4rem 2rem;
+    position: relative;
+}
+
+.companies-category {
+    margin-bottom: 4rem;
+}
+
+.companies-category:last-child {
+    margin-bottom: 0;
+}
+
+.companies-category .category-title {
+    font-size: 1.5rem;
+    margin-bottom: 3rem;
+    color: var(--accent-color);
+    text-align: center;
+}
+
+.companies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.company-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.company-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    border-color: var(--accent-color);
+}
+
+.company-icon {
+    font-size: 2.5rem;
+    color: var(--accent-color);
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.company-card:hover .company-icon {
+    transform: scale(1.1);
+    color: var(--text-bright);
+}
+
+.company-icon i {
+    opacity: 0.9;
+    filter: drop-shadow(0 0 10px rgba(var(--accent-rgb), 0.3));
+}
+
+.company-card h3 {
+    color: var(--text-bright);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.company-card p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+    .companies-section {
+        padding: 3rem 1rem;
+    }
+
+    .companies-category {
+        margin-bottom: 3rem;
+    }
+
+    .category-title {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .companies-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .company-card {
+        padding: 1.5rem;
+    }
+
+    .company-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .companies-category {
+        margin-bottom: 2rem;
+    }
+
+    .category-title {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .companies-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .company-icon {
+        font-size: 1.8rem;
     }
 } 

@@ -1,5 +1,6 @@
 const CURSOR_BASE_POSITION = 175;
 const CHAR_WIDTH = 9.6;
+
 const COLORS = {
     SUCCESS: '#ffff00',
     WARNING: '#ff0000',
@@ -69,7 +70,7 @@ class Terminal {
             
             this.prompt = PROMPTS.USER;
             this.cursorPosition = CURSOR_BASE_POSITION;
-
+            
             // Restore command bindings
             this.commands = {
                 help: this.showHelp.bind(this),
@@ -280,15 +281,6 @@ Begin exploring by entering a command below ⬇️`;
         this.terminal.scrollTop = this.terminal.scrollHeight;
     }
 
-    updateCursorPosition() {
-        const inputWidth = this.input.value.length * CHAR_WIDTH;
-        this.cursor.style.left = `${this.cursorPosition + inputWidth}px`;
-    }
-
-    resetCursor() {
-        this.cursor.style.left = `${this.cursorPosition}px`;
-    }
-
     navigateHistory(direction) {
         if (direction === 'up' && this.historyIndex < this.commandHistory.length - 1) {
             this.historyIndex++;
@@ -300,7 +292,6 @@ Begin exploring by entering a command below ⬇️`;
 
         this.input.value = this.historyIndex >= 0 ? 
             this.commandHistory[this.historyIndex] : '';
-        this.updateCursorPosition();
     }
 
     contact() {
@@ -783,6 +774,15 @@ ${STYLES.LIST_ITEM('Expanding cloud technology expertise')}`);
             }
             this.appendOutput(STYLES.ERROR('Matrix effect initialization failed'));
         }
+    }
+
+    updateCursorPosition() {
+        const inputWidth = this.input.value.length * CHAR_WIDTH;
+        this.cursor.style.left = `${this.cursorPosition + inputWidth}px`;
+    }
+
+    resetCursor() {
+        this.cursor.style.left = `${this.cursorPosition}px`;
     }
 }
 

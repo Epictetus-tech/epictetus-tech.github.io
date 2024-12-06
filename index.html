@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Miguel Quintero's Portfolio - Operations Analytics & Linux Technology Expert">
+    <meta name="keywords" content="operations analytics, linux, tech projects, portfolio, system administration, devops">
+    <meta property="og:title" content="Miguel Quintero - Portfolio">
+    <meta property="og:description" content="Explore my dual expertise in Operations Analytics and Linux Technology">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#60a5fa">
     <title>Miguel Quintero - Portfolio</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="landing.css" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="landing.css">
@@ -15,27 +21,32 @@
     <div class="loading-overlay">
         <div class="loading-spinner"></div>
     </div>
-    <div class="portal-hint">
-        <h1>Select a Portfolio</h1>
-    </div>
-    <div class="portal-container">
-        <a href="./corporate/index.html" class="portal business">
-            <div class="portal-content">
-                <i class="fas fa-briefcase"></i>
-                <h2>Operations & Analytics</h2>
-                <p>Analytics & Operations Experience</p>
-                <span class="portal-cta">Enter <i class="fas fa-arrow-right"></i></span>
-            </div>
-        </a>
+    <main role="main">
+        <h1 class="portal-hint" id="portal-hint">Select a Portfolio</h1>
+        <div class="portal-container" role="navigation" aria-labelledby="portal-hint">
+            <a href="./corporate/index.html" class="portal business" aria-label="Operations & Analytics Portfolio">
+                <div class="portal-content">
+                    <i class="fas fa-briefcase" aria-hidden="true"></i>
+                    <h2>Operations & Analytics</h2>
+                    <p>Analytics & Operations Experience</p>
+                    <span class="portal-cta">Enter <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+                </div>
+            </a>
 
-        <a href="./linux/index.html" class="portal tech">
-            <div class="portal-content">
-                <i class="fab fa-linux"></i>
-                <h2>Linux & Tech Projects</h2>
-                <p>System Administration & DevOps</p>
-                <span class="portal-cta">$ ssh user@portfolio <i class="fas fa-terminal"></i></span>
-            </div>
-        </a>
-    </div>
+            <a href="./linux/index.html" class="portal tech" aria-label="Linux & Tech Projects Portfolio">
+                <div class="portal-content">
+                    <i class="fab fa-linux" aria-hidden="true"></i>
+                    <h2>Linux & Tech Projects</h2>
+                    <p>System Administration & DevOps</p>
+                    <span class="portal-cta">$ ssh user@portfolio <i class="fas fa-terminal" aria-hidden="true"></i></span>
+                </div>
+            </a>
+        </div>
+    </main>
+    <noscript>
+        <div class="noscript-message">
+            Please enable JavaScript to view this portfolio website.
+        </div>
+    </noscript>
 </body>
 </html>

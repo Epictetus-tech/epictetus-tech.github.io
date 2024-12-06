@@ -248,28 +248,12 @@ body::after {
     line-height: 1;
 }
 
-.terminal-input {
-    background: none;
-    border: none;
-    color: #00ff00;
-    font-size: 16px;
-    outline: none;
-    width: auto;
-    min-width: 200px;
-    caret-color: transparent;
-    padding: 0;
-    line-height: 1;
-    flex-grow: 1;
-    transition: opacity 0.3s ease;
-}
-
 .cursor {
     position: absolute;
     left: 170px;
     top: 50%;
     transform: translateY(-50%);
     animation: blink 1s infinite;
-    color: #00ff00;
     background-color: #00ff00;
     width: 8px;
     height: 16px;
@@ -279,6 +263,22 @@ body::after {
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
+}
+
+.terminal-input {
+    background: none;
+    border: none;
+    color: #00ff00;
+    font-size: 16px;
+    outline: none;
+    width: auto;
+    min-width: 200px;
+    position: relative;
+    z-index: 1;
+    padding: 0;
+    line-height: 1;
+    flex-grow: 1;
+    caret-color: transparent;
 }
 
 .terminal-output {
@@ -303,6 +303,15 @@ body::after {
     .terminal-input {
         font-size: 14px;
         min-width: 150px;
+        padding-right: 20px;  /* Give space for cursor */
+    }
+
+    .cursor {
+        left: 128px;
+    }
+
+    .terminal-input:not(:empty) ~ .cursor {
+        margin-left: 0.5ch;
     }
 
     .banner-text {
@@ -318,10 +327,6 @@ body::after {
     .terminal-buttons span {
         width: 10px;
         height: 10px;
-    }
-
-    .cursor {
-        left: 150px;
     }
 
     .terminal-output div {
@@ -760,98 +765,10 @@ body,
     }
 }
 
-@media (max-width: 768px) {
-    .terminal-content {
-        padding: 15px;
-        font-size: 14px;
-    }
-
-    .banner-text {
-        font-size: 10px;  /* Adjust ASCII art size */
-        line-height: 1.2;
-    }
-
-    .terminal-buttons span {
-        width: 10px;
-        height: 10px;
-    }
-
-    .terminal-input {
-        font-size: 14px;
-    }
-
-    /* Adjust project display */
-    .project-title {
-        font-size: 1em;
-        word-break: break-word;
-    }
-
-    .project-desc {
-        font-size: 0.9em;
-    }
-}
-
-@media (max-width: 480px) {
-    .terminal {
-        height: 98vh;  /* More vertical space on mobile */
-        width: 100%;
-        margin: 0;
-        border-radius: 0;  /* Full screen on small devices */
-    }
-
-    .terminal-content {
-        padding: 10px;
-        font-size: 12px;
-    }
-
-    .terminal-header {
-        padding: 8px;
-    }
-
-    .banner-text {
-        font-size: 8px;  /* Even smaller ASCII art */
-        white-space: pre-wrap;  /* Allow wrapping if needed */
-    }
-
-    /* Adjust command prompt */
-    .prompt {
-        font-size: 12px;
-    }
-
+@media (max-width: 600px) {
     .cursor {
-        height: 14px;
-    }
-
-    /* Better spacing for mobile */
-    .terminal-output > div {
-        margin: 8px 0;
-        padding: 6px;
-    }
-}
-
-/* Handle very tall screens */
-@media (min-height: 1200px) {
-    .terminal {
-        height: 90vh;
-        max-height: 1200px;  /* Prevent excessive height */
-    }
-}
-
-/* Handle ultra-wide screens */
-@media (min-width: 2000px) {
-    .terminal {
-        max-width: 2000px;  /* Prevent excessive width */
-    }
-}
-
-/* Handle landscape mobile */
-@media (max-height: 500px) and (orientation: landscape) {
-    .terminal {
-        height: 98vh;
-    }
-
-    .terminal-content {
-        height: calc(98vh - 40px);
+        position: absolute;
+        left: 140px;
     }
 }
 
@@ -919,4 +836,16 @@ body,
 .matrix-text {
     position: relative;
     z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .cursor {
+        left: 155px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cursor {
+        left: 145px;
+    }
 }

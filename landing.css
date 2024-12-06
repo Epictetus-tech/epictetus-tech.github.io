@@ -3,6 +3,19 @@
     --accent-tech: #00ff00;
 }
 
+.noscript-message {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    z-index: 9999;
+    font-family: 'Inter', sans-serif;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -163,19 +176,17 @@ body {
 .portal-cta {
     padding: 0.8rem 1.5rem;
     border-radius: 30px;
-    font-size: 1rem;
+    font-size: 1.1rem;
     transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
     gap: 0.8rem;
     font-weight: 500;
-    line-height: 1;
-    cursor: pointer;
 }
 
 .portal-cta i {
-    font-size: 1rem;
-    margin: 0;
+    font-size: 1.1rem !important;
+    margin: 0 !important;
     opacity: 1;
 }
 
@@ -184,6 +195,9 @@ body {
     border: 1px solid rgba(96, 165, 250, 0.5);
     padding: 1rem 1.8rem;
     transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
 }
 
 .business .portal-cta:hover {
@@ -197,8 +211,11 @@ body {
     color: var(--accent-tech);
     border: 1px solid var(--accent-tech);
     text-shadow: 0 0 10px var(--accent-tech);
-    padding: 0.8rem 1.5rem;
+    padding: 1rem 1.8rem;
     transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
 }
 
 .tech .portal-cta:hover {
@@ -244,18 +261,78 @@ body {
     }
 
     .portal-cta {
-        padding: 0.6rem 1.2rem;
+        padding: 0.8rem 1.5rem;
+        font-size: 1.1rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+        width: auto;
+        min-width: 180px;
+    }
+
+    .portal-cta i {
+        font-size: 1.1rem !important;
+    }
+
+    .portal i {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .portal-content {
+        padding-top: 5rem;
+    }
+
+    .business .portal-cta,
+    .tech .portal-cta {
+        padding: 0.8rem 1.5rem;
+        font-size: 1.1rem;
+        width: auto;
+        min-width: 200px;
+    }
+
+    .portal-cta i {
+        font-size: 1.1rem !important;
+    }
+
+    .tech .portal-cta {
         font-size: 0.9rem;
     }
 }
 
 @media (max-width: 480px) {
+    .portal-hint {
+        font-size: 1.2rem;
+    }
+
     .portal h2 {
         font-size: 1.5rem;
     }
 
     .portal-content {
-        padding: 2rem;
+        padding: 5rem 1rem 1.5rem;
+    }
+
+    .portal i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .portal-cta {
+        padding: 0.8rem 1.5rem;
+        font-size: 1.1rem;
+        min-width: 160px;
+    }
+
+    .business .portal-cta,
+    .tech .portal-cta {
+        padding: 0.8rem 1.2rem;
+        min-width: 180px;
+    }
+
+    .portal-cta i {
+        font-size: 1.1rem !important;
     }
 }
 
