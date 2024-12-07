@@ -1,5 +1,5 @@
-const CURSOR_BASE_POSITION = 175;
 const CHAR_WIDTH = 9.6;
+const CURSOR_OFFSET = 9;
 
 const COLORS = {
     SUCCESS: '#ffff00',
@@ -68,8 +68,10 @@ class Terminal {
                 throw new Error('Required DOM elements not found');
             }
             
+            // Add click handler to terminal to maintain focus
+            this.terminal.addEventListener('click', () => this.input.focus());
+            
             this.prompt = PROMPTS.USER;
-            this.cursorPosition = CURSOR_BASE_POSITION;
             
             // Restore command bindings
             this.commands = {
@@ -89,9 +91,10 @@ class Terminal {
                 'matrix': this.matrixMode.bind(this)
             };
 
-            // Bind event handlers once
+            // Bind event handlers
             this.handleKeydown = this.handleKeydown.bind(this);
             this.handleInput = () => this.updateCursorPosition();
+            this.handleResize = this.handleResize.bind(this);
             
             // Initialize other properties
             this.commandHistory = [];
@@ -99,9 +102,54 @@ class Terminal {
             this.currentPath = '/home/user';
             this.projectsList = null;
             
+            // Add global click handler to maintain focus
+            document.addEventListener('click', () => {
+                if (this.inputLine.style.opacity === '1') {
+                    this.input.focus();
+                }
+            });
+            
             this.initializeTerminal();
+            
         } catch (error) {
             console.error('Terminal initialization failed:', error);
+        }
+    }
+
+    initializeTerminal() {
+        this.inputLine.style.opacity = '0';
+        
+        // Add event listeners
+        this.input.addEventListener('keydown', this.handleKeydown);
+        this.input.addEventListener('input', this.handleInput);
+        window.addEventListener('resize', this.handleResize);
+
+        let delay = 0;
+        const bootMessages = this.getBootMessages();
+        
+        bootMessages.forEach(message => {
+            delay += Math.random() * 100 + 50;
+            setTimeout(() => {
+                this.appendOutput(message);
+                this.terminal.scrollTop = this.terminal.scrollHeight;
+            }, delay);
+        });
+
+        setTimeout(() => {
+            this.clear();
+            this.appendOutput(this.getAsciiArt() + '\n\n' + this.getWelcomeText());
+            // Position cursor before making input visible
+            this.resetCursor();
+            this.inputLine.style.opacity = '1';
+            this.input.focus();
+        }, delay + 500);
+    }
+
+    handleFocusLoss() {
+        if (this.inputLine.style.display !== 'none') {
+            requestAnimationFrame(() => {
+                this.input.focus();
+            });
         }
     }
 
@@ -118,32 +166,6 @@ class Terminal {
             e.preventDefault();
             this.navigateHistory('down');
         }
-    }
-
-    initializeTerminal() {
-        this.inputLine.style.opacity = '0';
-        
-        // Add event listeners
-        this.input.addEventListener('keydown', this.handleKeydown);
-        this.input.addEventListener('input', this.handleInput);
-
-        // Start boot sequence
-        let delay = 0;
-        const bootMessages = this.getBootMessages();
-        
-        bootMessages.forEach(message => {
-            delay += Math.random() * 100 + 50;
-            setTimeout(() => {
-                this.appendOutput(message);
-                this.terminal.scrollTop = this.terminal.scrollHeight;
-            }, delay);
-        });
-
-        setTimeout(() => {
-            this.clear();
-            this.showWelcomeMessage();
-            this.inputLine.style.opacity = '1';
-        }, delay + 500);
     }
 
     async showBootSequence() {
@@ -193,10 +215,13 @@ class Terminal {
     showWelcomeMessage() {
         const asciiArt = this.getAsciiArt();
         const welcomeText = this.getWelcomeText();
-        
         this.appendOutput(asciiArt + '\n\n' + welcomeText);
-        this.inputLine.style.opacity = '1';
-        this.input.focus();
+        
+        // Force focus after a tiny delay to ensure DOM is ready
+        setTimeout(() => {
+            this.input.focus();
+            this.updateCursorPosition();
+        }, 10);
     }
 
     getAsciiArt() {
@@ -206,8 +231,8 @@ class Terminal {
 ██╔████╔██║    ██║ ██║   ██║    
 ██║╚██╔╝██║██  ██║ ██║   ██║    
 ██║ ╚═╝ ██║╚████╔╝ ╚██████╔╝    
-╚═╝     ╚═╝ ╚═══╝   ╚════██╗    
-                         ╚═╝</span>`;
+╚═╝     ╚═╝ ╚═══╝   ╚══██╗    
+                       ╚═╝</span>`;
     }
 
     getWelcomeText() {
@@ -654,6 +679,8 @@ ${STYLES.LIST_ITEM('Expanding cloud technology expertise')}`);
         // Clean up event listeners when terminal is destroyed
         this.input.removeEventListener('keydown', this.handleKeydown);
         this.input.removeEventListener('input', this.handleInput);
+        window.removeEventListener('resize', this.handleResize);
+        this.terminal.removeEventListener('click', () => this.input.focus());
     }
 
     updatePrompt(newPrompt) {
@@ -777,13 +804,28 @@ ${STYLES.LIST_ITEM('Expanding cloud technology expertise')}`);
     }
 
     updateCursorPosition() {
+        const promptElement = this.inputLine.querySelector('.prompt');
+        const promptWidth = promptElement.offsetWidth;
         const inputWidth = this.input.value.length * CHAR_WIDTH;
-        this.cursor.style.left = `${this.cursorPosition + inputWidth}px`;
+        this.cursor.style.left = `${promptWidth + inputWidth + CURSOR_OFFSET}px`;
     }
 
     resetCursor() {
-        this.cursor.style.left = `${this.cursorPosition}px`;
+        const promptElement = this.inputLine.querySelector('.prompt');
+        const promptWidth = promptElement.offsetWidth;
+        this.cursor.style.left = `${promptWidth + CURSOR_OFFSET}px`;
     }
+
+    handleResize() {
+        this.resetCursor();
+    }
+
+    // Add method to handle focus loss
+    handleFocusLoss = () => {
+        requestAnimationFrame(() => {
+            this.input.focus();
+        });
+    };
 }
 
 // Use DOMContentLoaded only once

@@ -5,16 +5,22 @@
     font-family: 'Courier New', Courier, monospace;
 }
 
+/* Reset viewport settings */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
 body {
     background-color: #1a1a1a;
-    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
     background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
     position: relative;
-    overflow: hidden;
 }
 
 /* Create multiple layers of stars */
@@ -91,6 +97,7 @@ body::after {
     width: 95%;
     max-width: 1800px;
     height: 95vh;
+    margin: 0 auto;
     background-color: #2b2b2b;
     border-radius: 8px;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
@@ -225,16 +232,12 @@ body::after {
 
 .terminal-input-line {
     display: flex;
-    gap: 10px;
-    position: relative;
-    padding: 5px 0;
     align-items: center;
-    transition: opacity 0.3s ease;
+    position: relative;
+    padding: 5px 8px;
     height: 24px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 4px;
-    animation: pulse 2s infinite;
-    opacity: 0;
 }
 
 @keyframes pulse {
@@ -246,11 +249,13 @@ body::after {
 .prompt {
     color: #4CAF50;
     line-height: 1;
+    padding-right: 10px;
+    white-space: nowrap;
+    user-select: none;
 }
 
 .cursor {
     position: absolute;
-    left: 170px;
     top: 50%;
     transform: translateY(-50%);
     animation: blink 1s infinite;
@@ -258,6 +263,8 @@ body::after {
     width: 8px;
     height: 16px;
     margin-top: -1px;
+    pointer-events: none;
+    z-index: 2;
 }
 
 @keyframes blink {
@@ -271,14 +278,15 @@ body::after {
     color: #00ff00;
     font-size: 16px;
     outline: none;
-    width: auto;
-    min-width: 200px;
-    position: relative;
-    z-index: 1;
     padding: 0;
     line-height: 1;
     flex-grow: 1;
     caret-color: transparent;
+    position: relative;
+    z-index: 1;
+    font-family: 'Courier New', Courier, monospace;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .terminal-output {
@@ -287,51 +295,56 @@ body::after {
     transition: opacity 0.3s ease;
 }
 
+/* Mobile styles */
 @media (max-width: 600px) {
+    html, body {
+        position: fixed;
+        overflow: hidden;
+    }
+
     .terminal {
-        height: 100vh;
+        position: absolute;
+        inset: 0;  /* Shorthand for top: 0, right: 0, bottom: 0, left: 0 */
         width: 100%;
+        height: 100%;
         margin: 0;
         border-radius: 0;
+        max-width: none;
     }
-    
+
     .terminal-content {
-        padding: 10px;
+        height: calc(100% - 40px);
+        padding: 15px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .terminal-header {
+        border-radius: 0;
+    }
+
+    .terminal-input-line {
+        padding: 5px 10px;
+    }
+
+    .prompt {
         font-size: 14px;
+        padding-right: 12px;
     }
 
     .terminal-input {
         font-size: 14px;
-        min-width: 150px;
-        padding-right: 20px;  /* Give space for cursor */
     }
 
     .cursor {
-        left: 128px;
+        margin-left: 3px;
     }
+}
 
-    .terminal-input:not(:empty) ~ .cursor {
-        margin-left: 0.5ch;
-    }
-
-    .banner-text {
-        font-size: 8px;
-        line-height: 1;
-        white-space: pre;
-    }
-
-    .terminal-buttons {
-        gap: 6px;
-    }
-
-    .terminal-buttons span {
-        width: 10px;
-        height: 10px;
-    }
-
-    .terminal-output div {
-        word-break: break-word;
-        white-space: pre-wrap;
+/* Remove any viewport units */
+@media (max-width: 480px) {
+    .terminal-content {
+        padding: 10px;
     }
 }
 
@@ -838,14 +851,86 @@ body,
     z-index: 1;
 }
 
-@media (max-width: 768px) {
-    .cursor {
-        left: 155px;
+/* Add viewport meta settings */
+@viewport {
+    width: device-width;
+    initial-scale: 1;
+    maximum-scale: 1;
+}
+
+/* Update base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    overflow-x: hidden;  /* Prevent horizontal scroll */
+    width: 100vw;
+    height: 100vh;
+}
+
+body {
+    background-color: #1a1a1a;
+    min-height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;  /* Prevent horizontal scroll */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    position: relative;
+    margin: 0;
+    padding: 0;
+}
+
+/* Update mobile styles */
+@media (max-width: 600px) {
+    .terminal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        border-radius: 0;
+        max-width: none;
+        overflow-x: hidden;  /* Prevent horizontal scroll */
+    }
+
+    .terminal-content {
+        width: 100%;
+        height: calc(100% - 40px);
+        padding: 15px;
+        overflow-y: auto;
+        overflow-x: hidden;  /* Prevent horizontal scroll */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .terminal-input-line {
+        width: 100%;
+        padding: 5px 10px;  /* Add horizontal padding */
+        overflow: hidden;  /* Prevent overflow */
+    }
+
+    .terminal-input {
+        width: calc(100% - 150px);  /* Account for prompt width */
+        min-width: auto;  /* Remove min-width constraint */
     }
 }
 
+/* Fine-tune smaller screens */
 @media (max-width: 480px) {
-    .cursor {
-        left: 145px;
+    .terminal-content {
+        padding: 10px;
+    }
+
+    .terminal-input {
+        width: calc(100% - 140px);  /* Slightly smaller for very small screens */
     }
 }
