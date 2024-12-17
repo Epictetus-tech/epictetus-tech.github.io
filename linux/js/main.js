@@ -355,20 +355,20 @@ Begin exploring by entering a command below ⬇️`;
 
     about() {
         this.appendOutput(`${STYLES.SECTION('About Me')}
-${STYLES.LIST_ITEM('Technology enthusiast with extensive experience in enterprise systems and automation')}
+${STYLES.LIST_ITEM('Technology enthusiast with extensive experience in enterprise systems and streamlining')}
 ${STYLES.LIST_ITEM('Proven track record of implementing innovative technical solutions in business environments')}
 
 ${STYLES.SUBSECTION('Background')}
-${STYLES.LIST_ITEM('Skilled in Linux system administration and infrastructure development')}
+${STYLES.LIST_ITEM('Experienced in home Linux system administration and infrastructure development')}
 ${STYLES.LIST_ITEM('Strong foundation in process optimization and system integration')}
-${STYLES.LIST_ITEM('Experience with containerization and modern deployment practices')}
+${STYLES.LIST_ITEM('Knowledge in containerization and server deployment')}
 ${STYLES.LIST_ITEM('Focus on scalable and maintainable solutions')}
 
 ${STYLES.SUBSECTION('Current Focus')}
-${STYLES.LIST_ITEM('Building robust infrastructure automation solutions')}
+${STYLES.LIST_ITEM('Building robust automation solutions')}
 ${STYLES.LIST_ITEM('Developing efficient system administration tools')}
-${STYLES.LIST_ITEM('Implementing modern DevOps practices')}
-${STYLES.LIST_ITEM('Expanding cloud technology expertise')}`);
+${STYLES.LIST_ITEM('Learning modern DevOps practices')}
+${STYLES.LIST_ITEM('Expanding technical expertise')}`);
     }
 
     skills() {
@@ -376,7 +376,7 @@ ${STYLES.LIST_ITEM('Expanding cloud technology expertise')}`);
             'Technical Skills': [
                 'Linux System Administration',
                 'Docker & Containerization',
-                'Infrastructure Automation',
+                'Report Building & Analysis',
                 'Version Control (Git)',
                 'Shell Scripting (Bash)',
                 'Web Development',
@@ -384,8 +384,8 @@ ${STYLES.LIST_ITEM('Expanding cloud technology expertise')}`);
                 'System Security & Hardening'
             ],
             'Professional Skills': [
-                'System Architecture Design',
-                'Technical Documentation',
+                'ERP Systems',
+                'Planning & Analysis',
                 'Process Optimization',
                 'Project Management',
                 'Problem Analysis & Resolution',
